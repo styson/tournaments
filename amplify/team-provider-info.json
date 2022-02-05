@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplify6e672835eb694-staging-201749-authRole",
+      "UnauthRoleArn": "arn:aws:iam::874323071376:role/amplify-amplify6e672835eb694-staging-201749-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::874323071376:role/amplify-amplify6e672835eb694-staging-201749-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-amplify6e672835eb694-staging-201749-deployment",
+      "UnauthRoleName": "amplify-amplify6e672835eb694-staging-201749-unauthRole",
+      "StackName": "amplify-amplify6e672835eb694-staging-201749",
+      "StackId": "arn:aws:cloudformation:us-west-2:874323071376:stack/amplify-amplify6e672835eb694-staging-201749/b1010680-86c0-11ec-bd24-0647be69fd5d",
+      "AmplifyAppId": "dmbyg8ztafmc"
+    },
+    "categories": {
+      "auth": {
+        "tournaments7bcf0096": {}
+      }
+    }
+  }
+}
