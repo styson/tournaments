@@ -9,8 +9,8 @@ export default function Home() {
   const [tournaments, setTournaments] = useState([]);
 
   const refresh = async () => {
-    API.get('apiTourney', '/tournaments/:id')
-      .then(res => setTournaments([...res]));
+    // API.get('apiTourney', '/tournaments/:id')
+    //   .then(res => setTournaments([...res]));
   }
 
   useEffect(() => {
@@ -19,11 +19,11 @@ export default function Home() {
 
   // const handleAdd = async () => refresh();
 
-  const handleDelete = async (id, name) => {
-    console.log(`delete tournament with id=${id}, name=${name}`)
-    API.del('apiTourney', `/tournaments/${id}`)
-      .then(res => console.log(res))
-      .then(refresh());
+  const handleDelete = async (id) => {
+    console.log(`delete tournament with id=${id}`)
+    // API.del('apiTourney', `/tournaments/${id}`)
+    //   .then(res => console.log(res))
+    //   .then(refresh());
   };
 
   return ( 

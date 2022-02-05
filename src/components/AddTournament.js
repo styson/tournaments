@@ -10,13 +10,13 @@ export default function AddTournament({ handleAdd }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    API.post('apiTourney', '/tournaments', {
-      body: {
-        id: v4(),
-        name: tourneyName,
-        rounds: tourneyRounds,
-      }
-    }).then(res => console.log(res));
+    // API.post('apiTourney', '/tournaments', {
+    //   body: {
+    //     id: v4(),
+    //     name: tourneyName,
+    //     rounds: tourneyRounds,
+    //   }
+    // }).then(res => console.log(res));
 
     setTourneyName('');
     setTourneyRounds('');
