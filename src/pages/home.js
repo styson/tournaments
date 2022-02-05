@@ -1,16 +1,16 @@
 import { Col, Container, Row, Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-// import { API } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import Header from '../components/Header';
 import Tournaments from '../components/Tournaments';
 
 export default function Home() {
   const [tournaments, setTournaments] = useState([]);
 
-  // useEffect(() => {
-  //   API.get('apiTourney', '/tournaments/:id')
-  //     .then(res => setTournaments([...res]));
-  // }, []);
+  useEffect(() => {
+    API.get('apiTournaments', '/tournaments')
+      .then(res => setTournaments(JSON.parse(res.body)));
+  }, []);
 
   return ( 
     <>
