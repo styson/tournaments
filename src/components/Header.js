@@ -12,6 +12,7 @@ const Header = () => (
           <Nav className="me-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/tournaments">Tournaments</Nav.Link>
+            <Nav.Link href="/scenarios">Scenarios</Nav.Link>
           </Nav>
         </Navbar.Collapse>
         <Authenticator>

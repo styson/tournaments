@@ -2,45 +2,45 @@ import { API } from 'aws-amplify';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { useState } from 'react';
 
-export default function AddTournament({ handleAdd }) {
-  const [tourneyName, setTourneyName] = useState('');
-  const [tourneyRounds, setTourneyRounds] = useState('');
+export default function AddScenario({ handleAdd }) {
+  const [scenarioId, setScenarioId] = useState('');
+  const [scenarioName, setScenarioName] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    API.post('apiTournaments', '/tournaments', {
+    API.post('apiScenarios', '/scenarios', {
       body: {
-        name: tourneyName,
-        rounds: tourneyRounds,
+        id: scenarioId,
+        name: scenarioName,
       }
     }).then(res => handleAdd());
 
-    setTourneyName('');
-    setTourneyRounds('');
+    setScenarioName('');
+    setScenarioId('');
   };
 
   return (
     <Form onSubmit={handleSubmit}>
       <Card>
         <Card.Body>
-          <Card.Title>Add New Tournament</Card.Title>
+          <Card.Title>Add New Scenario</Card.Title>
             <Form.Control
               className='mb-2'
               type='text'
-              placeholder='Enter name...'
-              value={tourneyName}
+              placeholder='Enter id...'
+              value={scenarioId}
               autoComplete='off'
-              onChange={(e) => setTourneyName(e.target.value)}
+              onChange={(e) => setScenarioId(e.target.value)}
             />
 
             <Form.Control
               className='mb-2'
               type='text'
-              placeholder='Enter number of rounds...'
-              value={tourneyRounds}
+              placeholder='Enter name...'
+              value={scenarioName}
               autoComplete='off'
-              onChange={(e) => setTourneyRounds(e.target.value)}
+              onChange={(e) => setScenarioName(e.target.value)}
             />
 
             <div className="d-grid gap-2">
@@ -49,7 +49,7 @@ export default function AddTournament({ handleAdd }) {
                 type='submit'
                 variant='primary'
               >
-                Add Tournament
+                Add Scenario
               </Button>
             </div>
         </Card.Body>

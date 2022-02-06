@@ -1,16 +1,26 @@
 import { Col, Container, Row, Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
+import AddScenario from '../components/AddScenario';
 import Header from '../components/Header';
-import TournamentList from '../components/TournamentList';
+import Scenario from '../components/Scenario';
 
 export default function Home() {
-  const [tournaments, setTournaments] = useState([]);
+  const [scenarios, setScenarios] = useState([]);
+
+  const refresh = async () => {
+    API.get('apiScenarios', '/scenarios')
+      .then(res => setScenarios(JSON.parse(res.body)));
+  }
 
   useEffect(() => {
-    API.get('apiTournaments', '/tournaments')
-      .then(res => setTournaments(JSON.parse(res.body)));
+    refresh();
   }, []);
+
+  const handleDelete = async (id) => {
+    API.del('apiScenarios', `/scenarios/${id}`)
+      .then(res => refresh());
+  };
 
   return ( 
     <>
@@ -18,27 +28,32 @@ export default function Home() {
       <Container fluid id="main">
         <Row>
           <Col md={3}>
-            <h1>Home</h1>
+            <h1>Scenarios</h1>
           </Col>
         </Row>
         <Row>
-          <Col md={3}>
+          <Col md={9}>
             <Table striped bordered hover size="sm">
               <thead>
                 <tr>
+                  <th>Id</th>
                   <th>Name</th>
-                  <th>Rounds</th>
+                  <th>Delete</th>
                 </tr>
               </thead>            
               <tbody>
-                { tournaments.map((p) => (
-                  <TournamentList
+                { scenarios.map((p) => (
+                  <Scenario
                     key={p.id}
-                    tournament={p}
+                    scenario={p}
+                    handleDelete={handleDelete}
                   />
                 ))}
               </tbody>            
             </Table>
+          </Col>
+          <Col md={3}>
+            <AddScenario handleAdd={ refresh } />
           </Col>
         </Row>
       </Container> 
