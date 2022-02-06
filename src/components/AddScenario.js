@@ -1,22 +1,26 @@
 import { API } from 'aws-amplify';
-import { Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function AddScenario({ handleAdd }) {
   const [scenarioId, setScenarioId] = useState('');
-  const [scenarioName, setScenarioName] = useState('');
+  const [scenarioTitle, setScenarioTitle] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    API.post('apiTournaments', '/scenarios', {
+    const id = uuidv4();
+    API.post('apiTournaments', '/director', {
       body: {
+        pk: `s#${id}`,
+        sk: `s#${id}`,
         id: scenarioId,
-        name: scenarioName,
+        title: scenarioTitle,
       }
     }).then(res => handleAdd());
 
-    setScenarioName('');
+    setScenarioTitle('');
     setScenarioId('');
   };
 
@@ -28,7 +32,7 @@ export default function AddScenario({ handleAdd }) {
             <Form.Control
               className='mb-2'
               type='text'
-              placeholder='Enter id...'
+              placeholder='Enter Id...'
               value={scenarioId}
               autoComplete='off'
               onChange={(e) => setScenarioId(e.target.value)}
@@ -37,10 +41,10 @@ export default function AddScenario({ handleAdd }) {
             <Form.Control
               className='mb-2'
               type='text'
-              placeholder='Enter name...'
-              value={scenarioName}
+              placeholder='Enter Title...'
+              value={scenarioTitle}
               autoComplete='off'
-              onChange={(e) => setScenarioName(e.target.value)}
+              onChange={(e) => setScenarioTitle(e.target.value)}
             />
 
             <div className="d-grid gap-2">

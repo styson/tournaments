@@ -1,6 +1,7 @@
 import { API } from 'aws-amplify';
-import { Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function AddTournament({ handleAdd }) {
   const [tourneyName, setTourneyName] = useState('');
@@ -9,8 +10,11 @@ export default function AddTournament({ handleAdd }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    API.post('apiTournaments', '/tournaments', {
+    const id = uuidv4();
+    API.post('apiTournaments', '/director', {
       body: {
+        pk: `t#${id}`,
+        sk: `t#${id}`,
         name: tourneyName,
         rounds: tourneyRounds,
       }

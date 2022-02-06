@@ -33,6 +33,10 @@
     "scenarios": {
       "service": "DynamoDB",
       "providerPlugin": "awscloudformation"
+    },
+    "director": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
     }
   },
   "function": {
@@ -73,6 +77,25 @@
           }
         }
       ]
+    },
+    "directorLambda": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "storage",
+          "resourceName": "director",
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "attributeEnvMap": {
+            "Name": "TABLE_NAME",
+            "Arn": "TABLE_ARN"
+          }
+        }
+      ]
     }
   },
   "api": {
@@ -91,6 +114,20 @@
         {
           "category": "function",
           "resourceName": "scenariosLambda",
+          "attributes": [
+            "Name",
+            "Arn"
+          ]
+        }
+      ]
+    },
+    "apiDirector": {
+      "service": "API Gateway",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "directorLambda",
           "attributes": [
             "Name",
             "Arn"

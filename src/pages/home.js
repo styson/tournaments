@@ -8,7 +8,7 @@ export default function Home() {
   const [tournaments, setTournaments] = useState([]);
 
   useEffect(() => {
-    API.get('apiTournaments', '/tournaments')
+    API.get('apiTournaments', '/director')
       .then(res => setTournaments(JSON.parse(res.body)));
   }, []);
 
@@ -33,7 +33,7 @@ export default function Home() {
               <tbody>
                 { tournaments.map((p) => (
                   <TournamentList
-                    key={p.id}
+                    key={p.pk}
                     tournament={p}
                   />
                 ))}

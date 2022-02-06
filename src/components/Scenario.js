@@ -5,12 +5,12 @@ const Scenario = ({ scenario, handleDelete }) => {
   return (
     <tr className='scenario'>
       <td>{scenario.id}</td>
-      <td>{scenario.name}</td>
+      <td>{scenario.title}</td>
       <td className=''>
         <Button 
           size='sm'
           variant='outline-secondary'
-          onClick={() => handleDelete(scenario.id)}
+          onClick={() => handleDelete(scenario.pk)}
         >
           X
         </Button>

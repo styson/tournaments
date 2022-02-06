@@ -9,7 +9,7 @@ export default function Home() {
   const [scenarios, setScenarios] = useState([]);
 
   const refresh = async () => {
-    API.get('apiTournaments', '/scenarios')
+    API.get('apiTournaments', '/director')
       .then(res => setScenarios(JSON.parse(res.body)));
   }
 
@@ -17,8 +17,8 @@ export default function Home() {
     refresh();
   }, []);
 
-  const handleDelete = async (id) => {
-    API.del('apiTournaments', `/scenarios/${id}`)
+  const handleDelete = async (pk) => {
+    API.del('apiTournaments', `/director/${pk}`)
       .then(res => refresh());
   };
 
@@ -36,16 +36,16 @@ export default function Home() {
             <Table striped bordered hover size="sm">
               <thead>
                 <tr>
-                  <th>Id</th>
-                  <th>Name</th>
-                  <th>Delete</th>
+                  <th>Scenario Id</th>
+                  <th>Title</th>
+                  <th></th>
                 </tr>
               </thead>            
               <tbody>
-                { scenarios.map((p) => (
+                { scenarios.map((s) => (
                   <Scenario
-                    key={p.id}
-                    scenario={p}
+                    key={s.pk}
+                    scenario={s}
                     handleDelete={handleDelete}
                   />
                 ))}

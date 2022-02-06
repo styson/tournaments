@@ -1,0 +1,26 @@
+{
+  "resourceName": "director",
+  "tableName": "director",
+  "partitionKey": {
+    "fieldName": "pk",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "sk",
+    "fieldType": "string"
+  },
+  "gsi": [
+    {
+      "name": "gsi1",
+      "partitionKey": {
+        "fieldName": "pk",
+        "fieldType": "string"
+      },
+      "sortKey": {
+        "fieldName": "sk",
+        "fieldType": "string"
+      }
+    }
+  ],
+  "triggerFunctions": []
+}
