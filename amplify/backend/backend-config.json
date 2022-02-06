@@ -29,6 +29,10 @@
     "tournaments": {
       "service": "DynamoDB",
       "providerPlugin": "awscloudformation"
+    },
+    "scenarios": {
+      "service": "DynamoDB",
+      "providerPlugin": "awscloudformation"
     }
   },
   "function": {
@@ -50,6 +54,25 @@
           }
         }
       ]
+    },
+    "scenariosLambda": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "storage",
+          "resourceName": "scenarios",
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "attributeEnvMap": {
+            "Name": "TABLE_NAME",
+            "Arn": "TABLE_ARN"
+          }
+        }
+      ]
     }
   },
   "api": {
@@ -60,6 +83,14 @@
         {
           "category": "function",
           "resourceName": "tournamentsLambda",
+          "attributes": [
+            "Name",
+            "Arn"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "scenariosLambda",
           "attributes": [
             "Name",
             "Arn"

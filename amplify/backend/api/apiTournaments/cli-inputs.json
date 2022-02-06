@@ -16,6 +16,22 @@
           "read"
         ]
       }
+    },
+    "/scenarios": {
+      "name": "/scenarios",
+      "lambdaFunction": "scenariosLambda",
+      "permissions": {
+        "setting": "protected",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "guest": [
+          "read"
+        ]
+      }
     }
   }
 }

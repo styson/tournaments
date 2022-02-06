@@ -9,7 +9,7 @@ export default function AddScenario({ handleAdd }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    API.post('apiScenarios', '/scenarios', {
+    API.post('apiTournaments', '/scenarios', {
       body: {
         id: scenarioId,
         name: scenarioName,

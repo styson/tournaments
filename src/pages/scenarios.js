@@ -9,7 +9,7 @@ export default function Home() {
   const [scenarios, setScenarios] = useState([]);
 
   const refresh = async () => {
-    API.get('apiScenarios', '/scenarios')
+    API.get('apiTournaments', '/scenarios')
       .then(res => setScenarios(JSON.parse(res.body)));
   }
 
@@ -18,7 +18,7 @@ export default function Home() {
   }, []);
 
   const handleDelete = async (id) => {
-    API.del('apiScenarios', `/scenarios/${id}`)
+    API.del('apiTournaments', `/scenarios/${id}`)
       .then(res => refresh());
   };
 
