@@ -10,7 +10,7 @@ const Tournament = ({ tournament, handleDelete }) => {
         <Button 
           size='sm'
           variant='outline-secondary'
-          onClick={() => handleDelete(tournament.id,tournament.name)}
+          onClick={() => handleDelete(tournament.pk,tournament.sk)}
         >
           X
         </Button>

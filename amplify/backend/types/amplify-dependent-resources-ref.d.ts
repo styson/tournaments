@@ -11,22 +11,6 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "storage": {
-        "tournaments": {
-            "Name": "string",
-            "Arn": "string",
-            "StreamArn": "string",
-            "PartitionKeyName": "string",
-            "PartitionKeyType": "string",
-            "Region": "string"
-        },
-        "scenarios": {
-            "Name": "string",
-            "Arn": "string",
-            "StreamArn": "string",
-            "PartitionKeyName": "string",
-            "PartitionKeyType": "string",
-            "Region": "string"
-        },
         "director": {
             "Name": "string",
             "Arn": "string",
@@ -39,18 +23,6 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "function": {
-        "tournamentsLambda": {
-            "Name": "string",
-            "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        },
-        "scenariosLambda": {
-            "Name": "string",
-            "Arn": "string",
-            "Region": "string",
-            "LambdaExecutionRole": "string"
-        },
         "directorLambda": {
             "Name": "string",
             "Arn": "string",
@@ -59,11 +31,6 @@ export type AmplifyDependentResourcesAttributes = {
         }
     },
     "api": {
-        "apiTournaments": {
-            "RootUrl": "string",
-            "ApiName": "string",
-            "ApiId": "string"
-        },
         "apiDirector": {
             "RootUrl": "string",
             "ApiName": "string",

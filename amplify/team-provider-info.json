@@ -18,17 +18,9 @@
         "true": {}
       },
       "function": {
-        "tournamentsLambda": {
-          "deploymentBucketName": "amplify-amplify6e672835eb694-staging-201749-deployment",
-          "s3Key": "amplify-builds/tournamentsLambda-64597072667057714535-build.zip"
-        },
-        "scenariosLambda": {
-          "deploymentBucketName": "amplify-amplify6e672835eb694-staging-201749-deployment",
-          "s3Key": "amplify-builds/scenariosLambda-50485430397048694739-build.zip"
-        },
         "directorLambda": {
           "deploymentBucketName": "amplify-amplify6e672835eb694-staging-201749-deployment",
-          "s3Key": "amplify-builds/directorLambda-5950592f6e5349524476-build.zip"
+          "s3Key": "amplify-builds/directorLambda-774c39794552386c3054-build.zip"
         }
       }
     }

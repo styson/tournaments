@@ -20,7 +20,7 @@ if(process.env.ENV && process.env.ENV !== "NONE") {
   tableName = tableName + '-' + process.env.ENV;
 }
 
-const userIdPresent = false; // TODO: update in case is required to use that definition
+const userIdPresent = true; // TODO: update in case is required to use that definition
 const partitionKeyName = "pk";
 const partitionKeyType = "S";
 const sortKeyName = "sk";
@@ -51,6 +51,25 @@ const convertUrlType = (param, type) => {
       return param;
   }
 }
+
+app.get(path + '/entity', function(req, res) {
+  const params = {
+    TableName: tableName,
+    // FilterExpression: "#et = :et",
+    // ExpressionAttributeNames: { "#et": "entityType" },
+    // ExpressionAttributeValues: {":et": { S: "tournament" }},
+    // Select: 'ALL_ATTRIBUTES',
+  }
+ 
+  dynamodb.scan(params, (err, data) => {
+    if (err) {
+      res.statusCode = 500;
+      res.json({error: 'Could not load items: ' + err});
+    } else {
+      res.json(data.Items);
+    }
+  });
+});
 
 /********************************
  * HTTP Get method for list objects *

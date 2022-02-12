@@ -8,8 +8,8 @@ export default function Home() {
   const [tournaments, setTournaments] = useState([]);
 
   useEffect(() => {
-    API.get('apiTournaments', '/director')
-      .then(res => setTournaments(JSON.parse(res.body)));
+    // API.get('apiDirector', '/director')
+    //   .then(res => setTournaments(JSON.parse(res.body)));
   }, []);
 
   return ( 

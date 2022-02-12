@@ -8,24 +8,35 @@ import Tournament from '../components/Tournament';
 export default function Home() {
   const [tournaments, setTournaments] = useState([]);
 
+  // const params = {'queryStringParameters': {
+  //   'pk': 'TOURNAMENTS',
+  //   'sk': 'TOURNEY#0badc6d7-b782-46c8-9bef-ceea898825db'
+  // }};
   const refresh = async () => {
-    API.get('apiTournaments', '/tournaments')
-      .then(res => setTournaments(JSON.parse(res.body)));
+    // API.get('apiDirector', '/director/:pk', params)
+    API.get('apiDirector', '/director/entity')
+    .then(res => {
+      const t = res.filter(_ => _.entityType === 'tournament');
+      const st = t.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1);
+      setTournaments(st);
+    });
   }
 
   useEffect(() => {
     refresh();
   }, []);
 
-  const handleDelete = async (id) => {
-    API.del('apiTournaments', `/tournaments/${id}`)
+  const handleDelete = async (pk, sk) => {
+    const params = {'queryStringParameters': { pk, sk }};
+    console.log(params)
+    API.del('apiDirector', '/director/object/:pk/:sk', params)
       .then(res => refresh());
   };
 
   return ( 
     <>
       <Header />
-      <Container fluid id="main">
+      <Container fluid id='main'>
         <Row>
           <Col md={3}>
             <h1>Tournaments</h1>
@@ -33,7 +44,7 @@ export default function Home() {
         </Row>
         <Row>
           <Col md={9}>
-            <Table striped bordered hover size="sm">
+            <Table striped bordered hover size='sm'>
               <thead>
                 <tr>
                   <th>Name</th>
@@ -44,7 +55,7 @@ export default function Home() {
               <tbody>
                 { tournaments.map((p) => (
                   <Tournament
-                    key={p.id}
+                    key={p.sk}
                     tournament={p}
                     handleDelete={handleDelete}
                   />

@@ -10,7 +10,7 @@ const Scenario = ({ scenario, handleDelete }) => {
         <Button 
           size='sm'
           variant='outline-secondary'
-          onClick={() => handleDelete(scenario.pk)}
+          onClick={() => handleDelete(scenario.pk,scenario.sk)}
         >
           X
         </Button>

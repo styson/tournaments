@@ -5,22 +5,23 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function AddScenario({ handleAdd }) {
   const [scenarioId, setScenarioId] = useState('');
-  const [scenarioTitle, setScenarioTitle] = useState('');
+  const [scenarioName, setScenarioName] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const id = uuidv4();
-    API.post('apiTournaments', '/director', {
+    API.post('apiDirector', '/director', {
       body: {
-        pk: `s#${id}`,
-        sk: `s#${id}`,
+        pk: 'SCENARIOS',
+        sk: `SCEN#${id}`,
         id: scenarioId,
-        title: scenarioTitle,
+        title: scenarioName,
+        entityType: 'scenario',
       }
     }).then(res => handleAdd());
 
-    setScenarioTitle('');
+    setScenarioName('');
     setScenarioId('');
   };
 
@@ -41,10 +42,10 @@ export default function AddScenario({ handleAdd }) {
             <Form.Control
               className='mb-2'
               type='text'
-              placeholder='Enter Title...'
-              value={scenarioTitle}
+              placeholder='Enter Name...'
+              value={scenarioName}
               autoComplete='off'
-              onChange={(e) => setScenarioTitle(e.target.value)}
+              onChange={(e) => setScenarioName(e.target.value)}
             />
 
             <div className="d-grid gap-2">

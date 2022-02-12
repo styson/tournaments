@@ -1,0 +1,50 @@
+Entities
+
+Tournaments					Players						Scenarios
+====================		====================		====================
+pk: TOURAMENTS   			pk: PLAYERS 				pk: SCENARIOS
+sk: TOURNEY#<tour-id>		sk: PLAY#<player-id>		sk: SCEN#<scen-id>
+[id				S			[id				S			[id				S
+name			S			name			S			name			S
+complete		B			email			S			ref (Scen.Id)	S
+completed		S										axis			S
+description		S										allied			S
+														notes			S
+
+Rounds						Games
+====================		====================
+pk: TOURNEY#<tour-id>			pk: TOURNEY#<tour-id>
+sk: ROUN#<round-id>			sk: GAME#<game-id>
+[id				S			[id				S
+Tournament_id	S -<		Tournament_id	S -<
+number			N 			Round_id		S -<
+description		S			Scenario_id		S -<
+complete		B			Player1_id		S
+							Player2_id		S
+							Notes			S
+							Player1_Win		B
+							Complete		B
+							Player1_Side	S
+							Player2_Side	S
+							Pseudo			B
+							RoundNumber		N
+
+Tournament-Player			
+====================		
+pk: TOURNEY#<tour-id>
+sk: PLAY#<player-id>
+[Tournament_id	S -<		
+[Player_id		S -<		
+Score			N			
+Rank			N			
+
+
+Tournament-Games
+=========================
+pk: TOURNEY#<tour-id>#ROUN#<round-id>
+sk: TOURNEY#<tour-id>#GAME#<game-id>
+[Tournament_id		S -<
+[Round_id			S -<
+[Scenario_id		S -<
+Row		(matrix)	N
+Column	(matrix)	N

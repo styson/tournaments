@@ -1,0 +1,40 @@
+Access Patterns
+
+Tournaments
+====================
+CRUD operations
+Add rounds to a tournament
+Add players to a tournament
+Find all of the players in a tournament
+Find all of the rounds in a tournament
+Find all of the games played in a tournament
+Generate the results for the tournament
+
+Players
+====================
+CRUD operations
+Find all of the games played
+
+Scenarios
+====================
+CRUD operations
+Find all of the games played
+
+Rounds
+====================
+CRUD operations
+Add scenarios
+Find all of the games played in this round
+Find all of the scenarios in this round
+Generate the matchups for this round
+Generate the results for this round
+
+Games
+====================
+CRUD operations
+Add tournament
+Add round
+Add scenario
+Add player 1
+Add player 2
+Add a result

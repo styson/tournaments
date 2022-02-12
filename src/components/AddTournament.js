@@ -11,12 +11,13 @@ export default function AddTournament({ handleAdd }) {
     e.preventDefault();
 
     const id = uuidv4();
-    API.post('apiTournaments', '/director', {
+    API.post('apiDirector', '/director', {
       body: {
-        pk: `t#${id}`,
-        sk: `t#${id}`,
+        pk: `TOURNAMENTS`,
+        sk: `TOURNEY#${id}`,
         name: tourneyName,
         rounds: tourneyRounds,
+        entityType: 'tournament',
       }
     }).then(res => handleAdd());
 
