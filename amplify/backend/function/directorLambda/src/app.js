@@ -20,7 +20,7 @@ if(process.env.ENV && process.env.ENV !== "NONE") {
   tableName = tableName + '-' + process.env.ENV;
 }
 
-const userIdPresent = true; // TODO: update in case is required to use that definition
+const userIdPresent = false; // TODO: update in case is required to use that definition
 const partitionKeyName = "pk";
 const partitionKeyType = "S";
 const sortKeyName = "sk";
@@ -52,29 +52,9 @@ const convertUrlType = (param, type) => {
   }
 }
 
-app.get(path + '/entity', function(req, res) {
-  const params = {
-    TableName: tableName,
-    // FilterExpression: "#et = :et",
-    // ExpressionAttributeNames: { "#et": "entityType" },
-    // ExpressionAttributeValues: {":et": { S: "tournament" }},
-    // Select: 'ALL_ATTRIBUTES',
-  }
- 
-  dynamodb.scan(params, (err, data) => {
-    if (err) {
-      res.statusCode = 500;
-      res.json({error: 'Could not load items: ' + err});
-    } else {
-      res.json(data.Items);
-    }
-  });
-});
-
 /********************************
  * HTTP Get method for list objects *
  ********************************/
-
 app.get(path + hashKeyPath, function(req, res) {
   var condition = {}
   condition[partitionKeyName] = {
@@ -102,7 +82,7 @@ app.get(path + hashKeyPath, function(req, res) {
       res.statusCode = 500;
       res.json({error: 'Could not load items: ' + err});
     } else {
-      res.json(data.Items);
+      res.json(data);
     }
   });
 });
@@ -146,7 +126,7 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
       if (data.Item) {
         res.json(data.Item);
       } else {
-        res.json(data) ;
+        res.json(data);
       }
     }
   });
@@ -242,7 +222,7 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
 });
 
 app.listen(3000, function() {
-    console.log("App started")
+  console.log("App started")
 });
 
 // Export the app object. When executing the application local this does nothing. However,

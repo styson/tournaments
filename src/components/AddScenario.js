@@ -14,9 +14,9 @@ export default function AddScenario({ handleAdd }) {
     API.post('apiDirector', '/director', {
       body: {
         pk: 'SCENARIOS',
-        sk: `SCEN#${id}`,
+        sk: `SCEN_${id}`,
         id: scenarioId,
-        title: scenarioName,
+        name: scenarioName,
         entityType: 'scenario',
       }
     }).then(res => handleAdd());

@@ -11,21 +11,9 @@ import Scenario from '../components/Scenario';
 export default function Home() {
   const [scenarios, setScenarios] = useState([]);
 
-  // const init = {
-  //   queryStringParameters: {
-  //     'entityType': 'scenario'
-  //   }
-  // }
-
   const refresh = async () => {
-    // API.get('apiDirector', '/director/:pk', params)
-    API.get('apiDirector', '/director/entity')
-    .then(res => {
-      console.log(res)
-      const t = res.filter(_ => _.entityType === 'scenario');
-      const st = t.sort((a, b) => a.id.toLowerCase() > b.id.toLowerCase() ? 1 : -1);
-      setScenarios(st);
-    });
+    API.get('apiDirector', '/director/SCENARIOS')
+      .then(res => setScenarios(res.Items.sort((a, b) => a.id.localeCompare(b.id))));
   }
 
   useEffect(() => {
@@ -33,28 +21,26 @@ export default function Home() {
   }, []);
 
   const handleDelete = async (pk, sk) => {
-    const params = {'queryStringParameters': { pk, sk }};
-    console.log(params)
-    API.del('apiDirector', '/director/object/:pk/:sk', params)
+    API.del('apiDirector', `/director/object/${pk}/${sk}`)
       .then(res => refresh());
   };
 
-  return ( <
-    >
-    <Header /> <
-    Container fluid id = 'main' >
-    <Row>
+  return ( 
+    <>
+      <Header />
+      <Container fluid id='main'>
+        <Row>
           <Col md={3}>
             <h1>Scenarios</h1>
           </Col>
-        </Row> <
-    Row >
-    <Col md={9}>
+        </Row>
+        <Row>
+          <Col md={9}>
             <Table striped bordered hover size='sm'>
               <thead>
                 <tr>
                   <th>Scenario Id</th>
-                  <th>Title</th>
+                  <th>Name</th>
                   <th></th>
                 </tr>
               </thead>            
@@ -68,12 +54,12 @@ export default function Home() {
                 ))}
               </tbody>            
             </Table>
-          </Col> <
-    Col md = { 3 } >
-    <AddScenario handleAdd={ refresh } /> <
-    /Col> <
-    /Row> <
-    /Container>  <
-    />
+          </Col>
+          <Col md={3}>
+            <AddScenario handleAdd={ refresh } />
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }

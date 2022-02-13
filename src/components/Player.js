@@ -1,16 +1,16 @@
 import { Button } from 'react-bootstrap';
 import React from 'react';
 
-const Scenario = ({ scenario, handleDelete }) => {
+const Player = ({ player, handleDelete }) => {
   return (
-    <tr className='scenario'>
-      <td>{scenario.id}</td>
-      <td>{scenario.name}</td>
+    <tr className='player'>
+      <td>{player.name}</td>
+      <td>{player.email}</td>
       <td className=''>
         <Button 
           size='sm'
           variant='outline-secondary'
-          onClick={() => handleDelete(scenario.pk,scenario.sk)}
+          onClick={() => handleDelete(player.pk,player.sk)}
         >
           X
         </Button>
@@ -19,4 +19,4 @@ const Scenario = ({ scenario, handleDelete }) => {
   );
 };
 
-export default Scenario;
+export default Player;

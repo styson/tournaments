@@ -1,16 +1,16 @@
 import { Col, Container, Row, Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
-import AddTournament from '../components/AddTournament';
+import AddPlayer from '../components/AddPlayer';
 import Header from '../components/Header';
-import Tournament from '../components/Tournament';
+import Player from '../components/Player';
 
 export default function Home() {
-  const [tournaments, setTournaments] = useState([]);
+  const [players, setPlayers] = useState([]);
 
   const refresh = async () => {
-    API.get('apiDirector', '/director/TOURNAMENTS')
-      .then(res => setTournaments(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
+    API.get('apiDirector', '/director/PLAYERS')
+      .then(res => setPlayers(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
   }
 
   useEffect(() => {
@@ -25,27 +25,27 @@ export default function Home() {
   return ( 
     <>
       <Header />
-      <Container fluid id='main'>
+      <Container fluid id = 'main' >
         <Row>
           <Col md={3}>
-            <h1>Tournaments</h1>
+            <h1>Players</h1>
           </Col>
-        </Row>
+        </Row> 
         <Row>
           <Col md={9}>
             <Table striped bordered hover size='sm'>
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Rounds</th>
-                  <th className=''>Delete</th>
+                  <th>Email</th>
+                  <th></th>
                 </tr>
               </thead>            
               <tbody>
-                { tournaments.map((p) => (
-                  <Tournament
+                { players.map((p) => (
+                  <Player
                     key={p.sk}
-                    tournament={p}
+                    player={p}
                     handleDelete={handleDelete}
                   />
                 ))}
@@ -53,10 +53,10 @@ export default function Home() {
             </Table>
           </Col>
           <Col md={3}>
-            <AddTournament handleAdd={ refresh } />
+            <AddPlayer handleAdd={ refresh } /> 
           </Col>
         </Row>
-      </Container> 
+      </Container>
     </>
   );
 }
