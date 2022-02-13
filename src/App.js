@@ -16,10 +16,12 @@ function App() {
     <Router>
       <Routes>
         <Route exact path='/' element={<Home />} />
-        <Route exact path='/tournaments' element={<Tournaments />} />
+        <Route path='/tournaments' element={<Tournaments />} />
         <Route exact path='/players' element={<Players />} />
         <Route exact path='/scenarios' element={<Scenarios />} />
-        <Route path="/setup" element={<Setup />} />
+        <Route path="/setup" element={<Setup />}>
+          <Route path=':sk' element={<Setup />} />
+        </Route>
       </Routes>
     </Router>
   );

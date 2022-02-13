@@ -1,5 +1,6 @@
 import { API } from 'aws-amplify';
 import { Button } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import React from 'react';
 
@@ -26,11 +27,19 @@ const Tournament = ({ tournament, handleDelete }) => {
     };
 
     getData();
-  });
+  }, []);
 
   return (
     <tr className='tournament'>
-      <td>{tournament.name}</td>
+      <td>
+        <Link
+          style={{ textDecoration: 'none' }}
+          to={`/setup/${tournament.sk}`}
+          key={tournament.sk}
+        >
+          {tournament.name}
+        </Link>        
+      </td>
       <td>{players.length}</td>
       <td>{scenarios.length}</td>
       <td>{rounds.length}</td>

@@ -1,11 +1,14 @@
 import { API } from 'aws-amplify';
 import { Button, ButtonGroup, ButtonToolbar, Col, Container, Dropdown, 
   DropdownButton, Form, FormControl, InputGroup, Row, Table, Tabs, Tab } from 'react-bootstrap';
+import { useParams } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Header from '../components/Header';
 
 export default function Setup() {
+  let params = useParams();
+
   const [tab, setTab] = useState('players');
   const [active, setActive] = useState({ name: '' });
   const [tournaments, setTournaments] = useState([]);
@@ -131,7 +134,6 @@ export default function Setup() {
 
   const saveTournament = async (e) => {
     e.preventDefault();
-    console.log(`Update ${active.name}`);
     await scenarios.forEach((s) => putTournamentScenario(s));
     await players.forEach((p) => putTournamentPlayer(p));
     await rounds.forEach((r) => putTournamentRound(r));
@@ -186,6 +188,7 @@ export default function Setup() {
         <Row>
           <Col md='9' className='mt-3'>
             <h2>{active.name}</h2>
+            <h5>{params.sk}</h5>
           </Col>
           <Col md='3' className='mt-3'>
             <ButtonToolbar>

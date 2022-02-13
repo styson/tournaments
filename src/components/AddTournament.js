@@ -13,7 +13,7 @@ export default function AddTournament({ handleAdd }) {
     API.post('apiDirector', '/director', {
       body: {
         pk: `TOURNAMENTS`,
-        sk: `TOURNEY_${id}`,
+        sk: `TOUR_${id}`,
         name: tourneyName,
       }
     }).then(res => handleAdd());
