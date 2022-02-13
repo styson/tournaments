@@ -17,7 +17,6 @@ export default function AddPlayer({ handleAdd }) {
         sk: `PLAY_${id}`,
         name: playerName,
         email: playerEmail,
-        entityType: 'player',
       }
     }).then(res => handleAdd());
 

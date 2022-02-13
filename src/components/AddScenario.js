@@ -17,7 +17,6 @@ export default function AddScenario({ handleAdd }) {
         sk: `SCEN_${id}`,
         id: scenarioId,
         name: scenarioName,
-        entityType: 'scenario',
       }
     }).then(res => handleAdd());
 

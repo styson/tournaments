@@ -14,6 +14,7 @@ const Header = () => (
             <Nav.Link href="/tournaments">Tournaments</Nav.Link>
             <Nav.Link href="/scenarios">Scenarios</Nav.Link>
             <Nav.Link href="/players">Players</Nav.Link>
+            <Nav.Link href="/setup">Tournament Setup</Nav.Link>
           </Nav>
         </Navbar.Collapse>
         <Authenticator>

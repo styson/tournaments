@@ -4,6 +4,7 @@ import awsExports from './aws-exports';
 import Home from './pages/home';
 import Players from './pages/players';
 import Scenarios from './pages/scenarios';
+import Setup from './pages/setup';
 import Tournaments from './pages/tournaments';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { withAuthenticator } from '@aws-amplify/ui-react';
@@ -18,6 +19,7 @@ function App() {
         <Route exact path='/tournaments' element={<Tournaments />} />
         <Route exact path='/players' element={<Players />} />
         <Route exact path='/scenarios' element={<Scenarios />} />
+        <Route path="/setup" element={<Setup />} />
       </Routes>
     </Router>
   );

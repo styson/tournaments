@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function AddTournament({ handleAdd }) {
   const [tourneyName, setTourneyName] = useState('');
-  const [tourneyRounds, setTourneyRounds] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,13 +15,10 @@ export default function AddTournament({ handleAdd }) {
         pk: `TOURNAMENTS`,
         sk: `TOURNEY_${id}`,
         name: tourneyName,
-        rounds: tourneyRounds,
-        entityType: 'tournament',
       }
     }).then(res => handleAdd());
 
     setTourneyName('');
-    setTourneyRounds('');
   };
 
   return (
@@ -37,15 +33,6 @@ export default function AddTournament({ handleAdd }) {
               value={tourneyName}
               autoComplete='off'
               onChange={(e) => setTourneyName(e.target.value)}
-            />
-
-            <Form.Control
-              className='mb-2'
-              type='text'
-              placeholder='Enter number of rounds...'
-              value={tourneyRounds}
-              autoComplete='off'
-              onChange={(e) => setTourneyRounds(e.target.value)}
             />
 
             <div className="d-grid gap-2">

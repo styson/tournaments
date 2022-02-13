@@ -8,8 +8,8 @@ export default function Home() {
   const [tournaments, setTournaments] = useState([]);
 
   useEffect(() => {
-    // API.get('apiDirector', '/director')
-    //   .then(res => setTournaments(JSON.parse(res.body)));
+    API.get('apiDirector', '/director/TOURNAMENTS')
+      .then(res => setTournaments(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
   }, []);
 
   return ( 
@@ -22,18 +22,20 @@ export default function Home() {
           </Col>
         </Row>
         <Row>
-          <Col md={3}>
-            <Table striped bordered hover size="sm">
+          <Col md={9}>
+            <Table striped bordered hover size='sm'>
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Players</th>
+                  <th>Scenarios</th>
                   <th>Rounds</th>
                 </tr>
               </thead>            
               <tbody>
                 { tournaments.map((p) => (
                   <TournamentList
-                    key={p.pk}
+                    key={p.sk}
                     tournament={p}
                   />
                 ))}

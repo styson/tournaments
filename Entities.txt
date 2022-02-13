@@ -13,7 +13,7 @@ description		S										allied			S
 
 Rounds						Games
 ====================		====================
-pk: TOURNEY#<tour-id>			pk: TOURNEY#<tour-id>
+pk: TOURNEY#<tour-id>		pk: TOURNEY#<tour-id>
 sk: ROUN#<round-id>			sk: GAME#<game-id>
 [id				S			[id				S
 Tournament_id	S -<		Tournament_id	S -<
@@ -37,6 +37,13 @@ sk: PLAY#<player-id>
 [Player_id		S -<		
 Score			N			
 Rank			N			
+
+Tournament-Scenario			
+====================		
+pk: TOURNEY#<tour-id>
+sk: SCEN#<scen-id>
+[Tournament_id	S -<		
+[Scenario_id	S -<		
 
 
 Tournament-Games
