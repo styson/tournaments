@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
 import AddScenario from '../components/AddScenario';
 // import Amplify from 'aws-amplify';
+import { GetItems } from '../dynamo/GetItems';
 import Header from '../components/Header';
 import Scenario from '../components/Scenario';
 
@@ -12,8 +13,7 @@ export default function Home() {
   const [scenarios, setScenarios] = useState([]);
 
   const refresh = async () => {
-    API.get('apiDirector', '/director/SCENARIOS')
-      .then(res => setScenarios(res.Items.sort((a, b) => a.id.localeCompare(b.id))));
+    GetItems('SCENARIOS', 'id', setScenarios);
   }
 
   useEffect(() => {

@@ -1,9 +1,10 @@
 import { API } from 'aws-amplify';
 import { Button, ButtonGroup, ButtonToolbar, Col, Container, Dropdown, 
   DropdownButton, Form, FormControl, InputGroup, Row, Table, Tabs, Tab } from 'react-bootstrap';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { GetItems } from '../dynamo/GetItems';
 import Header from '../components/Header';
 
 export default function Setup() {
@@ -27,26 +28,29 @@ export default function Setup() {
 
   const getTournaments = async () => {
     API.get('apiDirector', '/director/TOURNAMENTS')
-      .then(res => setTournaments(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
+      .then(res => setTournaments(res.Items.sort((a, b) => a.name.localeCompare(b.name))))
+      .finally(res => tournamentSelected(params.sk));
   }
 
   const getTournamentDetails = async (pk) => {
+    setPlayers([]);
+    setRounds([]);
+    setScenarios([]);
+
     API.get('apiDirector', `/director/${pk}`)
       .then(res => {
-        setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0));
-        setRounds(res.Items.filter(_ => _.sk.indexOf('ROUN') === 0));
-        setScenarios(res.Items.filter(_ => _.sk.indexOf('SCEN') === 0));
+        setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0).sort((a, b) => a.rank > b.rank ? 1 : -1));
+        setRounds(res.Items.filter(_ => _.sk.indexOf('ROUN') === 0).sort((a, b) => a.number > b.number ? 1 : -1));
+        setScenarios(res.Items.filter(_ => _.sk.indexOf('SCEN') === 0).sort((a, b) => a.id > b.id ? 1 : -1));
       });
   }
 
   const getAllPlayers = async () => {
-    API.get('apiDirector', '/director/PLAYERS')
-      .then(res => setAllPlayers(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
+    GetItems('PLAYERS', 'name', setAllPlayers);
   }
 
   const getAllScenarios = async () => {
-    API.get('apiDirector', '/director/SCENARIOS')
-      .then(res => setAllScenarios(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
+    GetItems('SCENARIOS', 'name', setAllScenarios);
   }
 
   const putTournamentScenario = async (s) => {
@@ -76,6 +80,7 @@ export default function Setup() {
         pk: `${active.sk}`,
         sk: `${p.sk}`,
         name: p.name,
+        rank: p.rank,
       }
     });
   }
@@ -92,10 +97,10 @@ export default function Setup() {
     const chk = players.length === 0 ? false  : players.find(_ => _.sk === sk);
     if(!chk) {
       const newPlayer = {
-        'pk': data.pk,
-        'sk': data.sk,
-        'name': data.name,
-        'rank': (players.length + 1)
+        pk: data.pk,
+        sk: data.sk,
+        name: data.name,
+        rank: (players.length + 1)
       }
       players.push(newPlayer);
       setPlayers([...players]);
@@ -161,6 +166,39 @@ export default function Setup() {
     setScenarioSearch('');
   }
 
+  const moveRow = async (direction, e, rank) => {
+    e.preventDefault();
+
+    const thisPlayer = players.findIndex(_ => _.rank === rank);
+    const thatPlayer = players.findIndex(_ => _.rank === rank + direction);
+    players[thisPlayer].rank = rank + direction;
+    players[thatPlayer].rank = rank;
+    setPlayers([...players]);
+    upNdown(direction, e.target);
+  }
+
+  function upNdown(direction, target) {
+    let index = target.parentElement.parentElement.parentElement.rowIndex;
+    if (!index) index = target.parentElement.parentElement.rowIndex;
+
+    const rows = document.getElementById('playerTable').rows;
+    
+    if (!rows[index]) {
+      console.log(`can't find row[${index}]`, target)
+      return;
+    }
+
+    const parent = rows[index].parentNode;
+
+    if(direction === -1) {
+      // when the row goes up the index will be equal to index - 1
+      if(index > 1) parent.insertBefore(rows[index],rows[index - 1]);
+    } else {
+      // when the row goes down the index will be equal to index + 1
+      if(index < rows.length -1) parent.insertBefore(rows[index + 1],rows[index]);
+    }
+  }
+
   useEffect(() => {
     const getData = async () => {
       await refresh();
@@ -174,11 +212,13 @@ export default function Setup() {
 
   const tournamentSelected = async (eventKey) => {
     const t = tournaments.find(t => t.sk === eventKey);
-    setActive(t);
-    await getTournamentDetails(t.sk); // the sk is the pk for tournament details
-    setPlayerResults([]);
-    setScenarioResults([]);
-    setTab('players');
+    if (t && t.sk === eventKey) {
+      setActive(t);
+      await getTournamentDetails(t.sk); // the sk is the pk for tournament details
+      setPlayerResults([]);
+      setScenarioResults([]);
+      setTab('players');
+    }
   }
 
   return (
@@ -188,7 +228,6 @@ export default function Setup() {
         <Row>
           <Col md='9' className='mt-3'>
             <h2>{active.name}</h2>
-            <h5>{params.sk}</h5>
           </Col>
           <Col md='3' className='mt-3'>
             <ButtonToolbar>
@@ -213,12 +252,12 @@ export default function Setup() {
           </Col>
         </Row>
         <Row>
-          <Tabs activeKey={tab} onSelect={(t) => setTab(t)} id="tabs" className="mt-3 mb-3">
-            <Tab eventKey="players" title="Players">
+          <Tabs activeKey={tab} onSelect={(t) => setTab(t)} id='tabs' className='mt-3 mb-3'>
+            <Tab eventKey='players' title={`Players - ${players.length}`}>
               <Row>
                 <Col md='3' className='mt-3'>
-                  <h3>Tournamant Players</h3>
-                  <Table striped bordered hover size='sm'>
+                  <h3>Tournament Players</h3>
+                  <Table id='playerTable' striped bordered hover size='sm'>
                     <thead>
                       <tr>
                         <th>Name</th>
@@ -228,12 +267,32 @@ export default function Setup() {
                     <tbody>
                       {players && players.map(function(d, idx){
                         return (
-                          <tr key={idx}>
+                          <tr key={idx} data-index={idx}>
                             <td>{d.name}</td>
-                            <td>{d.rank}</td>
+                            <td>
+                              {d.rank}
+                              <Button
+                                className='float-end'
+                                size='sm'
+                                variant='outline-secondary'
+                                onClick={(e) => moveRow(+1, e, d.rank)}
+                                disabled={d.rank === players.length ? 'disabled' : '' }
+                              >
+                                ⋁
+                              </Button>
+                              <Button
+                                className='float-end'
+                                size='sm'
+                                variant='outline-secondary'
+                                onClick={(e) => moveRow(-1, e, d.rank)}
+                                disabled={d.rank === 1 ? 'disabled' : '' }
+                              >
+                                ⋀
+                              </Button>
+                            </td>
                           </tr>
                         )
-                      })}              
+                      })}
                     </tbody>            
                   </Table>
                 </Col>
@@ -269,7 +328,7 @@ export default function Setup() {
                         key={idx}
                         value={{ pk: p.pk, sk: p.sk }}
                         variant='outline-success'
-                        onClick={(e) => addPlayer(p.sk)}
+                        onClick={() => addPlayer(p.sk)}
                       >
                         {p.name}
                       </Button>
@@ -278,7 +337,7 @@ export default function Setup() {
                 </Col>
               </Row>
             </Tab>
-            <Tab eventKey="scenarios" title="Scenarios">
+            <Tab eventKey='scenarios' title={`Scenarios - ${scenarios.length}`}>
               <Row>
                 <Col md='3' className='mt-3'>
                   <h3>Scenarios</h3>
@@ -333,7 +392,7 @@ export default function Setup() {
                         key={idx}
                         value={{ pk: s.pk, sk: s.sk }}
                         variant='outline-success'
-                        onClick={(e) => addScenario(s.sk)}
+                        onClick={() => addScenario(s.sk)}
                       >
                         {s.id}{s.id ? ': ' : ''}{s.name}
                       </Button>
@@ -342,7 +401,7 @@ export default function Setup() {
                 </Col>
               </Row>
             </Tab>
-            <Tab eventKey="rounds" title="Rounds">
+            <Tab eventKey='rounds' title={`Rounds - ${rounds.length}`}>
               <Row>
                 <Col md='3' className='mt-3'>
                   <h3>Rounds</h3>
@@ -351,7 +410,7 @@ export default function Setup() {
                   <Button
                     className='mb-1'
                     size='sm'
-                    onClick={(e) => addRound()}
+                    onClick={() => addRound()}
                     disabled={active.name === '' ? 'disabled' : '' }                
                   >
                     Add Round

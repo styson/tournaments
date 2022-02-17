@@ -1,6 +1,7 @@
-import { Col, Container, Row, Table } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
+import { Col, Container, Row, Table } from 'react-bootstrap';
+import { GetItems } from '../dynamo/GetItems';
+import { useEffect, useState } from 'react';
 import AddPlayer from '../components/AddPlayer';
 import Header from '../components/Header';
 import Player from '../components/Player';
@@ -9,8 +10,7 @@ export default function Home() {
   const [players, setPlayers] = useState([]);
 
   const refresh = async () => {
-    API.get('apiDirector', '/director/PLAYERS')
-      .then(res => setPlayers(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
+    GetItems('PLAYERS', 'name', setPlayers);
   }
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import { Col, Container, Row, Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
 import AddTournament from '../components/AddTournament';
+import { GetItems } from '../dynamo/GetItems';
 import Header from '../components/Header';
 import Tournament from '../components/Tournament';
 
@@ -9,8 +10,7 @@ export default function Home() {
   const [tournaments, setTournaments] = useState([]);
 
   const refresh = async () => {
-    API.get('apiDirector', '/director/TOURNAMENTS')
-      .then(res => setTournaments(res.Items.sort((a, b) => a.name.localeCompare(b.name))));
+    GetItems('TOURNAMENTS', 'name', setTournaments);
   }
 
   useEffect(() => {
