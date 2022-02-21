@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function AddScenario({ handleAdd }) {
-  const [scenarioId, setScenarioId] = useState('');
+  const [scenarioSk, setScenarioId] = useState('');
   const [scenarioName, setScenarioName] = useState('');
 
   const handleSubmit = async (e) => {
@@ -15,7 +15,7 @@ export default function AddScenario({ handleAdd }) {
       body: {
         pk: 'SCENARIOS',
         sk: `SCEN_${id}`,
-        id: scenarioId,
+        id: scenarioSk,
         name: scenarioName,
       }
     }).then(res => handleAdd());
@@ -33,7 +33,7 @@ export default function AddScenario({ handleAdd }) {
               className='mb-2'
               type='text'
               placeholder='Enter Id...'
-              value={scenarioId}
+              value={scenarioSk}
               autoComplete='off'
               onChange={(e) => setScenarioId(e.target.value)}
             />

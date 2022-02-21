@@ -30,7 +30,7 @@ const Rounds = ({ tournament, data }) => {
     const newColumn = {
       id: `round-${x}`,
       title: `Round ${x}`, 
-      scenarioIds: [],
+      scenarioSks: [],
     };
 
     const newState = {
@@ -47,25 +47,34 @@ const Rounds = ({ tournament, data }) => {
 
   const copy = (source, destination, draggableId) => {
     const rounds = tData.columns;
-    const tasks = tData.tasks;
+    const scenarios = tData.scenarios;
 
     const finish = rounds[destination.droppableId];
+    const finishScenarioSks = Array.from(finish.scenarioSks);
 
-    const item = tasks[draggableId];
-    const scen = { ...item, id: `SCEN_${uuidv4()}` }
+    const scenario = scenarios[draggableId];
 
-    const finishScenarioIds = Array.from(finish.scenarioIds);
-    finishScenarioIds.splice(destination.index, 0, scen.id);
+    let alreadyInRound = false;
+    finishScenarioSks.forEach(sk => {
+      const fs = scenarios[sk];
+      if (fs.id === scenario.id && fs.name === scenario.name) {
+        alreadyInRound = true;
+      }
+    });
+    if (alreadyInRound) return;
+
+    const scen = { ...scenario, pk: finish.sk, sk: `SCEN_${uuidv4()}`, new: true, roundPk: finish.pk, roundSk: finish.sk }
+    finishScenarioSks.splice(destination.index, 0, scen.sk);
     const newFinish = {
       ...finish,
-      scenarioIds: finishScenarioIds,
+      scenarioSks: finishScenarioSks,
     };
 
     const newState = {
       ...tData,
-      tasks: {
-        ...tasks,
-        [scen.id]: scen,
+      scenarios: {
+        ...scenarios,
+        [scen.sk]: scen,
       },
       columns: {
         ...rounds,
@@ -74,19 +83,20 @@ const Rounds = ({ tournament, data }) => {
     };
     
     setData(newState);
+    console.log(newState.scenarios);
   };
 
   const reorder = (source, destination, draggableId) => {
     const rounds = tData.columns;
     const start = rounds[source.droppableId];
-    const newScenarioIds = Array.from(start.scenarioIds);
+    const newScenarioSks = Array.from(start.scenarioSks);
 
-    newScenarioIds.splice(source.index, 1);
-    newScenarioIds.splice(destination.index, 0, draggableId);
+    newScenarioSks.splice(source.index, 1);
+    newScenarioSks.splice(destination.index, 0, draggableId);
 
     const newColumn = {
       ...start,
-      scenarioIds: newScenarioIds,
+      scenarioSks: newScenarioSks,
     };
 
     const newState = {
@@ -102,26 +112,45 @@ const Rounds = ({ tournament, data }) => {
 
   const move = (source, destination, draggableId) => {
     const rounds = tData.columns;
-    const start = rounds[source.droppableId];
-    const finish = rounds[destination.droppableId];
+    const scenarios = tData.scenarios;
 
+    const start = rounds[source.droppableId];
+    const startScenarioSks = Array.from(start.scenarioSks);
+
+    const finish = rounds[destination.droppableId];
+    const finishScenarioSks = Array.from(finish.scenarioSks);
+
+    const scenario = scenarios[draggableId];
+
+    let alreadyInRound = false;
+    finishScenarioSks.forEach(sk => {
+      const fs = scenarios[sk];
+      if (fs.id === scenario.id && fs.name === scenario.name) {
+        alreadyInRound = true;
+      }
+    });
+    if (alreadyInRound) return;
+
+    const scen = { ...scenario, roundPk: finish.pk, roundSk: finish.sk }
     // Moving from one list to another
-    const startScenarioIds = Array.from(start.scenarioIds);
-    startScenarioIds.splice(source.index, 1);
+    startScenarioSks.splice(source.index, 1);
     const newStart = {
       ...start,
-      scenarioIds: startScenarioIds,
+      scenarioSks: startScenarioSks,
     };
 
-    const finishScenarioIds = Array.from(finish.scenarioIds);
-    finishScenarioIds.splice(destination.index, 0, draggableId);
+    finishScenarioSks.splice(destination.index, 0, draggableId);
     const newFinish = {
       ...finish,
-      scenarioIds: finishScenarioIds,
+      scenarioSks: finishScenarioSks,
     };
 
     const newState = {
       ...tData,
+      scenarios: {
+        ...scenarios,
+        [scen.sk]: scen,
+      },
       columns: {
         ...rounds,
         [newStart.id]: newStart,
@@ -130,6 +159,7 @@ const Rounds = ({ tournament, data }) => {
     };
     
     setData(newState);
+    console.log(newState.scenarios);
   }
 
   function onDragEnd(result) {
@@ -190,8 +220,8 @@ const Rounds = ({ tournament, data }) => {
         <DragDropContext onDragEnd={onDragEnd}>
           {tData.roundOrder.map(columnId => {
             const column = tData.columns[columnId];
-            const tasks = column.scenarioIds.map(taskId => tData.tasks[taskId]);
-            return <Column key={column.id} column={column} tasks={tasks} />;
+            const scenarios = column.scenarioSks.map(scenarioSk => tData.scenarios[scenarioSk]);
+            return <Column key={column.id} column={column} scenarios={scenarios} />;
           })}
         </DragDropContext>
       </Row>

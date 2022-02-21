@@ -5,7 +5,7 @@ import AddScenario from '../components/AddScenario';
 // import Amplify from 'aws-amplify';
 import { GetItems } from '../dynamo/GetItems';
 import Header from '../components/Header';
-import Scenario from '../components/Scenario';
+import ScenarioRow from '../components/ScenarioRow';
 
 // Amplify.Logger.LOG_LEVEL = 'DEBUG';
 
@@ -46,7 +46,7 @@ export default function Home() {
               </thead>            
               <tbody>
                 { scenarios.map((s) => (
-                  <Scenario
+                  <ScenarioRow
                     key={s.sk}
                     scenario={s}
                     handleDelete={handleDelete}

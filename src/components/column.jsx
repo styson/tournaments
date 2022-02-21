@@ -2,7 +2,7 @@ import { Col } from 'react-bootstrap';
 import { Droppable } from 'react-beautiful-dnd';
 import React from 'react';
 import styled from 'styled-components';
-import Task from './task';
+import Scenario from './scenario';
 
 const Container = styled.div`
   border: 1px solid lightgrey;
@@ -14,7 +14,7 @@ const Container = styled.div`
 const Title = styled.h3`
   padding: 2px 8px;
 `;
-const TaskList = styled.div`
+const ScenarioList = styled.div`
   padding: 2px 8px;
   transition: background-color 0.2s ease;
   background-color: ${props => (props.isDraggingOver ? 'lightgray' : 'white')};
@@ -31,17 +31,17 @@ export default class Column extends React.Component {
           <Droppable droppableId={this.props.column.id}>
             {(provided, snapshot) => { 
               return (
-                <TaskList
+                <ScenarioList
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                   isDragging={snapshot.isDragging}                  
                   isDraggingOver={snapshot.isDraggingOver}
                 >
-                  {this.props.tasks.map((task, index) => {
-                    return <Task key={task.id} task={task} index={index} />
+                  {this.props.scenarios.map((scenario, index) => {
+                    return <Scenario key={scenario.sk} scenario={scenario} index={index} />
                   })}
                   {provided.placeholder}
-                </TaskList>
+                </ScenarioList>
               )
             }}
           </Droppable>

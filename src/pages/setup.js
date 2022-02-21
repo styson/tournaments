@@ -24,7 +24,7 @@ export default function Setup() {
 
   const [players, setPlayers] = useState([]);
   const [rounds, setRounds] = useState([]);
-  const [data, setData] = useState({ tasks: {}, columns: {}, roundOrder: [] });
+  const [data, setData] = useState({ scenarios: {}, columns: {}, roundOrder: [] });
 
   const getTournaments = async () => {
     API.get('apiDirector', '/director/TOURNAMENTS')
@@ -51,26 +51,15 @@ export default function Setup() {
     GetItems('SCENARIOS', 'name', setAllScenarios);
   }
 
-  // const putTournamentScenario = async (s) => {
+  // const putTournamentRound = async (r) => {
   //   API.put('apiDirector', '/director', {
   //     body: {
   //       pk: `${active.sk}`,
-  //       sk: `${s.sk}`,
-  //       id: s.id,
-  //       name: s.name,
+  //       sk: `${r.sk}`,
+  //       number: r.number,
   //     }
   //   });
   // }
-
-  const putTournamentRound = async (r) => {
-    API.put('apiDirector', '/director', {
-      body: {
-        pk: `${active.sk}`,
-        sk: `${r.sk}`,
-        number: r.number,
-      }
-    });
-  }
 
   const putTournamentPlayer = async (p) => {
     API.put('apiDirector', '/director', {
@@ -126,7 +115,7 @@ export default function Setup() {
   const saveTournament = async (e) => {
     e.preventDefault();
     await players.forEach((p) => putTournamentPlayer(p));
-    await rounds.forEach((r) => putTournamentRound(r));
+    // await rounds.forEach((r) => putTournamentRound(r));
   }
 
   const findPlayers = async (e) => {
@@ -205,9 +194,11 @@ export default function Setup() {
   useEffect(() => {
     rounds.map((r, idx) => {
       const column = {
+        pk: r.pk,
+        sk: r.sk,
         id: `round-${r.number}`,
         title: `Round ${r.number}`,
-        scenarioIds: [],
+        scenarioSks: [],
       };
       data.columns[column.id] = column;
       data.roundOrder = addColumn(data.roundOrder, column.id);
@@ -219,13 +210,13 @@ export default function Setup() {
     const column = {
       id: 'scenarios',
       title: 'Scenarios',
-      scenarioIds: [],
+      scenarioSks: [],
     };
 
-    data.tasks = {};
+    data.scenarios = {};
     allScenarios.map((s, idx) => {
-      column.scenarioIds.push(s.sk);
-      data.tasks[s.sk] = { id: s.sk, ref: s.id, content: s.name };
+      column.scenarioSks.push(s.sk);
+      data.scenarios[s.sk] = { pk: s.pk, sk: s.sk, id: s.id, name: s.name };
     });
 
     data.columns[column.id] = column;
