@@ -7,7 +7,6 @@ import React from 'react';
 const Tournament = ({ tournament, handleDelete }) => {
   const [players, setPlayers] = useState([]);
   const [rounds, setRounds] = useState([]);
-  const [scenarios, setScenarios] = useState([]);
 
   const [canDelete, setCanDelete] = useState(false);
 
@@ -16,8 +15,7 @@ const Tournament = ({ tournament, handleDelete }) => {
       .then(res => {
         setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0));
         setRounds(res.Items.filter(_ => _.sk.indexOf('ROUN') === 0));
-        setScenarios(res.Items.filter(_ => _.sk.indexOf('SCEN') === 0));
-        setCanDelete(players.length + scenarios.length + rounds.length === 0);
+        setCanDelete(players.length + rounds.length === 0);
       });
   }
 
@@ -41,7 +39,6 @@ const Tournament = ({ tournament, handleDelete }) => {
         </Link>        
       </td>
       <td>{players.length}</td>
-      <td>{scenarios.length}</td>
       <td>{rounds.length}</td>
       <td className=''>
         <Button 

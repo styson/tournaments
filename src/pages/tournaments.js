@@ -38,7 +38,6 @@ export default function Home() {
                 <tr>
                   <th>Name</th>
                   <th>Players</th>
-                  <th>Scenarios</th>
                   <th>Rounds</th>
                   <th className=''>Delete</th>
                 </tr>

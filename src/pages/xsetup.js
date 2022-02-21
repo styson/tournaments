@@ -3,8 +3,10 @@ import { Button, ButtonGroup, ButtonToolbar, Col, Container, Dropdown,
   DropdownButton, Form, FormControl, InputGroup, Row, Table, Tabs, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { GetItems } from '../dynamo/GetItems';
 import Header from '../components/Header';
+
 import Rounds from '../components/Rounds';
 
 export default function Setup() {
@@ -24,7 +26,6 @@ export default function Setup() {
 
   const [players, setPlayers] = useState([]);
   const [rounds, setRounds] = useState([]);
-  const [data, setData] = useState({ tasks: {}, columns: {}, roundOrder: [] });
 
   const getTournaments = async () => {
     API.get('apiDirector', '/director/TOURNAMENTS')
@@ -123,6 +124,17 @@ export default function Setup() {
   //   }
   // }
 
+  const addRound = async () => {
+    const id = uuidv4();
+    const newRound = {
+      pk: `${active.sk}`,
+      sk: `ROUN_${id}`,
+      number: rounds.length+1,
+    }
+    rounds.push(newRound);
+    setRounds([...rounds]);
+  }
+
   const saveTournament = async (e) => {
     e.preventDefault();
     await players.forEach((p) => putTournamentPlayer(p));
@@ -195,44 +207,6 @@ export default function Setup() {
     getData();
   }, [allPlayers.length, allScenarios.length]);
 
-  function addColumn(roundArray, round) {
-    if (!roundArray.includes(round)) {
-      roundArray.push(round);
-    }
-    return roundArray.sort();
-  }
-
-  useEffect(() => {
-    rounds.map((r, idx) => {
-      const column = {
-        id: `round-${r.number}`,
-        title: `Round ${r.number}`,
-        scenarioIds: [],
-      };
-      data.columns[column.id] = column;
-      data.roundOrder = addColumn(data.roundOrder, column.id);
-    });
-    setData(data);
-  }, [rounds]);
-
-  useEffect(() => {
-    const column = {
-      id: 'scenarios',
-      title: 'Scenarios',
-      scenarioIds: [],
-    };
-
-    data.tasks = {};
-    allScenarios.map((s, idx) => {
-      column.scenarioIds.push(s.sk);
-      data.tasks[s.sk] = { id: s.sk, ref: s.id, content: s.name };
-    });
-
-    data.columns[column.id] = column;
-    data.roundOrder = addColumn(data.roundOrder, column.id);
-    setData(data);
-  }, [allScenarios]);
-
   const tournamentSelected = async (eventKey) => {
     const t = tournaments.find(t => t.sk === eventKey);
     if (t && t.sk === eventKey) {
@@ -249,10 +223,10 @@ export default function Setup() {
       <Header />
       <Container fluid id='main'>
         <Row>
-          <Col md='8' className='mt-3'>
+          <Col md='9' className='mt-3'>
             <h2>{active.name}</h2>
           </Col>
-          <Col md='4' className='mt-3'>
+          <Col md='3' className='mt-3'>
             <ButtonToolbar>
               <DropdownButton
                 className='me-4'
@@ -360,8 +334,25 @@ export default function Setup() {
                 </Col>
               </Row>
             </Tab>
-            <Tab eventKey='rounds' title='Rounds'>
-              <Rounds tournament={active} data={data} />
+            <Tab eventKey='rounds' title={`Rounds - ${rounds.length}`}>
+              <Row>
+                <Col md='3' className='mt-3'>
+                  <h3>Rounds</h3>
+                </Col>
+                <Col md='3' className='mt-3'>
+                  <Button
+                    className='mb-1'
+                    size='sm'
+                    onClick={() => addRound()}
+                    disabled={active.name === '' ? 'disabled' : '' }                
+                  >
+                    Add Round
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Rounds rounds={rounds} tournament={active} scenarios={allScenarios} />
+              </Row>
             </Tab>
           </Tabs>
         </Row>
