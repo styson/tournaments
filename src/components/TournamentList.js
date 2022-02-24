@@ -30,7 +30,7 @@ const TournamentList = ({ tournament }) => {
       <td>
         <Link
           style={{ textDecoration: 'none' }}
-          to={`/setup/${tournament.sk}`}
+          to={`/tournament/${tournament.sk}`}
           key={tournament.sk}
         >
           {tournament.name}

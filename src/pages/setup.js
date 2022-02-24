@@ -224,8 +224,8 @@ export default function Setup() {
                 title='Select a Tournament'
                 onSelect={tournamentSelected}
               >
-                { tournaments.map((p) => (
-                  <Dropdown.Item eventKey={p.sk} key={p.sk}>{p.name}</Dropdown.Item>
+                { tournaments.map((t) => (
+                  <Dropdown.Item eventKey={t.sk} key={t.sk}>{t.name}</Dropdown.Item>
                 ))}
               </DropdownButton>
               <Button

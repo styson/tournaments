@@ -31,10 +31,10 @@ export default function Home() {
                 </tr>
               </thead>            
               <tbody>
-                { tournaments.map((p) => (
+                { tournaments.map((t) => (
                   <TournamentList
-                    key={p.sk}
-                    tournament={p}
+                    key={t.sk}
+                    tournament={t}
                   />
                 ))}
               </tbody>            

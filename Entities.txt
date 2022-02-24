@@ -4,48 +4,51 @@ Tournaments					Players						Scenarios
 ====================		====================		====================
 pk: TOURAMENTS   			pk: PLAYERS 				pk: SCENARIOS
 sk: TOUR_<tour-id>			sk: PLAY_<player-id>		sk: SCEN_<scen-id>
-[id				S			[id				S			[id				S
 name			S			name			S			name			S
-complete		B			email			S			ref (Scen.Id)	S
+complete		B			email			S			id 				S
 completed		S										axis			S
 description		S										allied			S
 														notes			S
 
-Rounds						Games
-====================		====================
-pk: TOUR_<tour-id>			pk: TOUR_<tour-id>
-sk: ROUN_<round-id>			sk: GAME_<game-id>
-[id				S			[id				S
-Tournament_id	S -<		Tournament_id	S -<
-number			N 			Round_id		S -<
-description		S			Scenario_id		S -<
-complete		B			Player1_id		S
-							Player2_id		S
-							Notes			S
-							Player1_Win		B
-							Complete		B
-							Player1_Side	S
-							Player2_Side	S
-							Pseudo			B
-							RoundNumber		N
-
-Tournament-Player			
+Tournament-Player
 ====================		
 pk: TOUR_<tour-id>
 sk: PLAY_<player-id>
-[Tournament_id	S -<		
-[Player_id		S -<		
-Score			N			
-Rank			N			
+Score			N
+Rank			N
 
-Tournament-Scenario			
+Round
+====================
+pk: TOUR_<tour-id>
+sk: ROUN_<round-id>
+name			S 
+complete		B
+
+Round-Scenario
 ====================		
 pk: TOUR_<tour-id>
-sk: SCEN_<scen-id>
-[Tournament_id	S -<		
-[Scenario_id	S -<		
+sk: ROUN_<round-id>_SCEN_<scen-id>
+id 				S
+name 			S
 
 
+Round-Game
+====================
+pk: TOUR_<tour-id>
+sk: ROUN_<round-id>_GAME_<game-id>
+Player1_id		S
+Player2_id		S
+Notes			S
+Player1_Win		B
+Complete		B
+Player1_Side	S
+Player2_Side	S
+Pseudo			B
+RoundNumber		N
+
+
+
+???
 Tournament-Games
 =========================
 pk: TOUR_<tour-id>_ROUN_<round-id>
