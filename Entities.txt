@@ -3,7 +3,7 @@ Entities
 Tournaments					Players						Scenarios
 ====================		====================		====================
 pk: TOURAMENTS   			pk: PLAYERS 				pk: SCENARIOS
-sk: TOURNEY#<tour-id>		sk: PLAY#<player-id>		sk: SCEN#<scen-id>
+sk: TOUR_<tour-id>			sk: PLAY_<player-id>		sk: SCEN_<scen-id>
 [id				S			[id				S			[id				S
 name			S			name			S			name			S
 complete		B			email			S			ref (Scen.Id)	S
@@ -13,8 +13,8 @@ description		S										allied			S
 
 Rounds						Games
 ====================		====================
-pk: TOURNEY#<tour-id>		pk: TOURNEY#<tour-id>
-sk: ROUN#<round-id>			sk: GAME#<game-id>
+pk: TOUR_<tour-id>			pk: TOUR_<tour-id>
+sk: ROUN_<round-id>			sk: GAME_<game-id>
 [id				S			[id				S
 Tournament_id	S -<		Tournament_id	S -<
 number			N 			Round_id		S -<
@@ -31,8 +31,8 @@ complete		B			Player1_id		S
 
 Tournament-Player			
 ====================		
-pk: TOURNEY#<tour-id>
-sk: PLAY#<player-id>
+pk: TOUR_<tour-id>
+sk: PLAY_<player-id>
 [Tournament_id	S -<		
 [Player_id		S -<		
 Score			N			
@@ -40,16 +40,16 @@ Rank			N
 
 Tournament-Scenario			
 ====================		
-pk: TOURNEY#<tour-id>
-sk: SCEN#<scen-id>
+pk: TOUR_<tour-id>
+sk: SCEN_<scen-id>
 [Tournament_id	S -<		
 [Scenario_id	S -<		
 
 
 Tournament-Games
 =========================
-pk: TOURNEY#<tour-id>#ROUN#<round-id>
-sk: TOURNEY#<tour-id>#GAME#<game-id>
+pk: TOUR_<tour-id>_ROUN_<round-id>
+sk: TOUR_<tour-id>_GAME_<game-id>
 [Tournament_id		S -<
 [Round_id			S -<
 [Scenario_id		S -<

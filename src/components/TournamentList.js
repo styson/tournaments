@@ -11,7 +11,8 @@ const TournamentList = ({ tournament }) => {
     API.get('apiDirector', `/director/${sk}`)
       .then(res => {
         setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0));
-        setRounds(res.Items.filter(_ => _.sk.indexOf('ROUN') === 0));
+        // setRounds(res.Items.filter(_ => _.sk.indexOf('ROUN') === 0));
+        setRounds(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') < 0)).sort((a, b) => a.name > b.name ? 1 : -1));
       });
   }
 
@@ -21,6 +22,7 @@ const TournamentList = ({ tournament }) => {
     };
 
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

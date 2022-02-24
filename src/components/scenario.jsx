@@ -12,8 +12,11 @@ const Container = styled.div`
 
 export default class Scenario extends React.Component {
   render() {
+    const id = this.props.scenario.sk.indexOf('ROUN') === 0 ? 
+      this.props.scenario.sk : 
+      `${this.props.round}_${this.props.scenario.sk}`;
     return (
-      <Draggable draggableId={this.props.scenario.sk} index={this.props.index}>
+      <Draggable draggableId={id} index={this.props.index}>
         {(provided, snapshot) => {
           return (
             <Container

@@ -19,12 +19,11 @@ export default function Setup() {
   const [playerSearch, setPlayerSearch] = useState('');
 
   const [allScenarios, setAllScenarios] = useState([]);
-  const [scenarioResults, setScenarioResults] = useState([]);
-  const [scenarioSearch, setScenarioSearch] = useState('');
 
   const [players, setPlayers] = useState([]);
   const [rounds, setRounds] = useState([]);
-  const [data, setData] = useState({ scenarios: {}, columns: {}, roundOrder: [] });
+  const [scenarios, setScenarios] = useState([]);
+  const [data, setData] = useState({ scenarios: {}, rounds: {}, roundOrder: [] });
 
   const getTournaments = async () => {
     API.get('apiDirector', '/director/TOURNAMENTS')
@@ -39,7 +38,8 @@ export default function Setup() {
     API.get('apiDirector', `/director/${pk}`)
       .then(res => {
         setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0).sort((a, b) => a.rank > b.rank ? 1 : -1));
-        setRounds(res.Items.filter(_ => _.sk.indexOf('ROUN') === 0).sort((a, b) => a.number > b.number ? 1 : -1));
+        setRounds(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') < 0)).sort((a, b) => a.name > b.name ? 1 : -1));
+        setScenarios(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') > 0)).sort((a, b) => a.id > b.id ? 1 : -1));
       });
   }
 
@@ -50,16 +50,6 @@ export default function Setup() {
   const getAllScenarios = async () => {
     GetItems('SCENARIOS', 'name', setAllScenarios);
   }
-
-  // const putTournamentRound = async (r) => {
-  //   API.put('apiDirector', '/director', {
-  //     body: {
-  //       pk: `${active.sk}`,
-  //       sk: `${r.sk}`,
-  //       number: r.number,
-  //     }
-  //   });
-  // }
 
   const putTournamentPlayer = async (p) => {
     API.put('apiDirector', '/director', {
@@ -94,28 +84,9 @@ export default function Setup() {
     }
   }
 
-  // const addScenario = async (sk) => {
-  //   if(sk === 0) return;
-  //   console.log(`addScenario ${sk}`);
-  //   const data = allScenarios.find(_ => _.sk === sk);
-
-  //   const chk = scenarios.length === 0 ? false  : scenarios.find(_ => _.sk === sk);
-  //   if(!chk) {
-  //     const newScenario = {
-  //       'pk': data.pk,
-  //       'sk': data.sk,
-  //       'name': data.name,
-  //       'id': data.id
-  //     }
-  //     scenarios.push(newScenario);
-  //     setScenarios([...scenarios]);
-  //   }
-  // }
-
   const saveTournament = async (e) => {
     e.preventDefault();
     await players.forEach((p) => putTournamentPlayer(p));
-    // await rounds.forEach((r) => putTournamentRound(r));
   }
 
   const findPlayers = async (e) => {
@@ -127,17 +98,6 @@ export default function Setup() {
       setPlayerResults([{ pk: 0, sk: 0, name: 'Not Found' }]);
     }
     setPlayerSearch('');
-  }
-
-  const findScenarios = async (e) => {
-    e.preventDefault();
-    const data = allScenarios.filter(_ => _.id.toLowerCase().indexOf(scenarioSearch.toLowerCase()) >= 0);
-    if (data.length > 0) {
-      setScenarioResults(data);
-    } else {
-      setScenarioResults([{ pk: 0, sk: 0, id: '', name: 'Not Found' }]);
-    }
-    setScenarioSearch('');
   }
 
   const moveRow = async (direction, e, rank) => {
@@ -182,9 +142,10 @@ export default function Setup() {
     };
 
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allPlayers.length, allScenarios.length]);
 
-  function addColumn(roundArray, round) {
+  function addRound(roundArray, round) {
     if (!roundArray.includes(round)) {
       roundArray.push(round);
     }
@@ -192,36 +153,49 @@ export default function Setup() {
   }
 
   useEffect(() => {
-    rounds.map((r, idx) => {
-      const column = {
+    rounds.forEach((r, idx) => {
+      const round = {
         pk: r.pk,
         sk: r.sk,
-        id: `round-${r.number}`,
-        title: `Round ${r.number}`,
+        name: r.name,
         scenarioSks: [],
       };
-      data.columns[column.id] = column;
-      data.roundOrder = addColumn(data.roundOrder, column.id);
+      data.rounds[round.sk] = round;
+      data.roundOrder = addRound(data.roundOrder, round.sk);
     });
     setData(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rounds]);
 
   useEffect(() => {
-    const column = {
-      id: 'scenarios',
-      title: 'Scenarios',
+    scenarios.forEach((s, idx) => {
+      const i = s.sk.indexOf('_SCEN_');
+      const roundSk = s.sk.substr(0,i);
+      // const round = data.rounds[roundSk];
+      data.rounds[roundSk].scenarioSks.push(s.sk.substr(i+1));
+    });
+    setData(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scenarios]);
+
+  useEffect(() => {
+    const round = {
+      pk: active.sk,
+      sk: 'scenarios',
+      name: 'Scenarios',
       scenarioSks: [],
     };
 
     data.scenarios = {};
-    allScenarios.map((s, idx) => {
-      column.scenarioSks.push(s.sk);
+    allScenarios.forEach((s, idx) => {
+      round.scenarioSks.push(s.sk);
       data.scenarios[s.sk] = { pk: s.pk, sk: s.sk, id: s.id, name: s.name };
     });
 
-    data.columns[column.id] = column;
-    data.roundOrder = addColumn(data.roundOrder, column.id);
+    data.rounds[round.sk] = round;
+    data.roundOrder = addRound(data.roundOrder, round.sk);
     setData(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allScenarios]);
 
   const tournamentSelected = async (eventKey) => {
@@ -230,7 +204,6 @@ export default function Setup() {
       setActive(t);
       await getTournamentDetails(t.sk); // the sk is the pk for tournament details
       setPlayerResults([]);
-      setScenarioResults([]);
       setTab('players');
     }
   }

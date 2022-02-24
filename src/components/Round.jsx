@@ -22,13 +22,13 @@ const ScenarioList = styled.div`
   min-height: 100px;
 `;
 
-export default class Column extends React.Component {
+export default class Round extends React.Component {
   render() {
     return (
       <Col md='3'>
         <Container>
-          <Title>{this.props.column.title}</Title>
-          <Droppable droppableId={this.props.column.id}>
+          <Title>{this.props.round.name}</Title>
+          <Droppable droppableId={this.props.round.sk} isDropDisabled={(this.props.round.name==='Scenarios')}>
             {(provided, snapshot) => { 
               return (
                 <ScenarioList
@@ -38,7 +38,7 @@ export default class Column extends React.Component {
                   isDraggingOver={snapshot.isDraggingOver}
                 >
                   {this.props.scenarios.map((scenario, index) => {
-                    return <Scenario key={scenario.sk} scenario={scenario} index={index} />
+                    return <Scenario key={scenario.sk} round={this.props.round.sk} scenario={scenario} index={index} />
                   })}
                   {provided.placeholder}
                 </ScenarioList>
