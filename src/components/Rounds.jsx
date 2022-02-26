@@ -1,4 +1,4 @@
-import { API } from 'aws-amplify';
+import { delRoundScenario, putRoundScenario, putItem } from '../dynamo/ApiCalls';
 import { Button, Col, Row } from 'react-bootstrap';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { useState, useEffect } from 'react';
@@ -21,27 +21,6 @@ const Rounds = ({ tournament, data }) => {
     return roundArray.sort();
   }
 
-  const delRoundScenario = async (pk, sk) => {
-    API.del('apiDirector', `/director/object/${pk}/${sk}`);
-  }
-
-  const putRoundScenario = async (scen) => {
-    API.put('apiDirector', '/director', {
-      body: {
-        pk: `${scen.pk}`,
-        sk: `${scen.sk}`,
-        name: scen.name,
-        id: scen.id,
-      }
-    });
-  }
-
-  const putTournamentRound = async (body) => {
-    API.put('apiDirector', '/director', {
-      body
-    });
-  }
-
   const addNewRound = async () => {
     const rounds = tData.rounds;
     const x = Object.keys(rounds).length;
@@ -51,7 +30,7 @@ const Rounds = ({ tournament, data }) => {
       name: `Round ${x}`, 
     };
 
-    putTournamentRound(newRound);
+    putItem(newRound);
 
     newRound.scenarioSks = [];
     
