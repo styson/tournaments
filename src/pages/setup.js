@@ -3,7 +3,7 @@ import { Button, ButtonGroup, ButtonToolbar, Col, Container, Dropdown,
   DropdownButton, Form, FormControl, InputGroup, Row, Table, Tabs, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { GetItems } from '../dynamo/GetItems';
+import { GetItems } from '../dynamo/ApiCalls';
 import Header from '../components/Header';
 import Rounds from '../components/Rounds';
 

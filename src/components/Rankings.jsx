@@ -8,8 +8,8 @@ import { useState, useEffect } from 'react';
 import RankedPlayer from './RankedPlayer';
 import React from 'react';
 
-const Rankings = ({ round, players, standings, index }) => {
-  const [complete, setComplete] = useState(round.standingsComplete || false);
+const Rankings = ({ round, players, standings }) => {
+  const [complete, setComplete] = useState(round.rankingsComplete || false);
 
   const [activePlayers, setActivePlayers] = useState([]);
   const [extraPlayers, setExtraPlayers] = useState([]);
@@ -79,7 +79,7 @@ const Rankings = ({ round, players, standings, index }) => {
     setComplete(checked);
     const rnd = { 
       ...round,
-      standingsComplete: checked,
+      rankingsComplete: checked,
       activePlayers,
       extraPlayers,
     }
@@ -205,25 +205,28 @@ const Rankings = ({ round, players, standings, index }) => {
             }}
           </Droppable>
         </DragDropContext>
-        <Button
-          id='reset-players'
-          size='sm'
-          className='mb-2'
-          variant='outline-secondary'
-          onClick={resetPlayers}
-          disabled={complete}
-        >
-          Reset Players
-        </Button>
-        <Button
-          id='clear-players'
-          size='sm'
-          variant='outline-danger'
-          onClick={clearPlayers}
-          disabled={complete}
-        >
-          Clear Players
-        </Button>
+        <div className='d-flex'>
+          <Button
+            id='clear-players'
+            size='sm'
+            className='flex-grow-1 me-1 mb-2'
+            variant='outline-danger'
+            onClick={clearPlayers}
+            disabled={complete}
+          >
+            Clear Players
+          </Button>
+          <Button
+            id='reset-players'
+            size='sm'
+            className='flex-grow-1 ms-1 mb-2'
+            variant='outline-secondary'
+            onClick={resetPlayers}
+            disabled={complete}
+          >
+            Reset Players
+          </Button>
+        </div>
         <Error>
           {error}
         </Error>

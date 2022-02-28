@@ -1,5 +1,5 @@
 import { Col, Container, Row, Table } from 'react-bootstrap';
-import { GetItems } from '../dynamo/GetItems';
+import { GetItems } from '../dynamo/ApiCalls';
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import TournamentList from '../components/TournamentList';

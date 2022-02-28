@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
 import AddScenario from '../components/AddScenario';
 // import Amplify from 'aws-amplify';
-import { GetItems } from '../dynamo/GetItems';
+import { GetItems } from '../dynamo/ApiCalls';
 import Header from '../components/Header';
 import ScenarioRow from '../components/ScenarioRow';
 

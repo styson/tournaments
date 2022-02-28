@@ -1,6 +1,6 @@
 import { API } from 'aws-amplify';
 import { Col, Container, Row, Table } from 'react-bootstrap';
-import { GetItems } from '../dynamo/GetItems';
+import { GetItems } from '../dynamo/ApiCalls';
 import { useEffect, useState } from 'react';
 import AddPlayer from '../components/AddPlayer';
 import Header from '../components/Header';

@@ -3,19 +3,16 @@ import { Col, Container, Row, Tabs, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Matchups from '../components/Matchups';
+import Matches from '../components/Matches';
 import Rankings from '../components/Rankings';
-import Results from '../components/Results';
 import Standings from '../components/Standings';
 
 export default function Tournament() {
   let params = useParams();
 
-  // const matchups = [];
-  // const results = [];
-
   const [players, setPlayers] = useState([]);
   const [rounds, setRounds] = useState([]);
+  const [scenarios, setScenarios] = useState([]);
   const [standings, setStandings] = useState([]);
   const [tournament, setTournament] = useState({});
 
@@ -24,6 +21,7 @@ export default function Tournament() {
   const getTournamentDetails = async (pk) => {
     setPlayers([]);
     setRounds([]);
+    setScenarios([]);
 
     API.get('apiDirector', '/director/TOURNAMENTS')
       .then(res => {
@@ -35,7 +33,7 @@ export default function Tournament() {
       .then(res => {
         setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0).sort((a, b) => a.rank > b.rank ? 1 : -1));
         setRounds(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') < 0)).sort((a, b) => a.name > b.name ? 1 : -1));
-        // setScenarios(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') > 0)).sort((a, b) => a.id > b.id ? 1 : -1));
+        setScenarios(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') > 0)).sort((a, b) => a.id > b.id ? 1 : -1));
       });
   }
 
@@ -66,21 +64,16 @@ export default function Tournament() {
                 <Row>
                   <Col md='3' className='mt-2'>
                     <div className='ms-3 me-1'>
-                      <Rankings round={r} players={players} index={index} tab={tab} standings={standings} />
+                      <Rankings round={r} players={players} standings={standings} />
                     </div>
                   </Col>
-                  <Col md='3' className='mt-2'>
+                  <Col md='4' className='mt-2'>
                     <div className='ms-3 me-1'>
-                      <Matchups matchups={r.matchups || []} />
+                      <Matches round={r} scenarios={scenarios} />
                     </div>
                   </Col>
-                  <Col md='3' className='mt-2'>
-                    <div className='ms-3 me-1'>
-                      <Results results={r.results || []} />
-                    </div>
-                  </Col>
-                  <Col md='3' className='mt-2'>
-                    <div className='ms-3 me-1'>
+                  <Col md='4' className='mt-2'>
+                    <div className='mx-3'>
                       <Standings standings={standings} />
                     </div>
                   </Col>

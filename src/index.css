@@ -1,3 +1,8 @@
 div#main {
   margin-top: 60px;
 }
+
+i.bi-plus {
+  font-size: 1.2rem;
+  color: cornflowerblue;
+}
