@@ -1,4 +1,4 @@
-import { DragBox } from './styled/Box';
+import { DragBox } from '../styled/Box';
 import { Draggable } from 'react-beautiful-dnd';
 import { Badge } from 'react-bootstrap';
 import React from 'react';

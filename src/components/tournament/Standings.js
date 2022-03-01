@@ -1,4 +1,4 @@
-import { Box } from './styled/Box';
+import { Box } from '../styled/Box';
 import { Row } from 'react-bootstrap';
 import React from 'react';
 import RankedPlayer from './RankedPlayer';

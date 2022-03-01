@@ -3,9 +3,9 @@ import { Col, Container, Row, Tabs, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Matches from '../components/Matches';
-import Rankings from '../components/Rankings';
-import Standings from '../components/Standings';
+import Matches from '../components/tournament/Matches';
+import Rankings from '../components/tournament/Rankings';
+import Standings from '../components/tournament/Standings';
 
 export default function Tournament() {
   let params = useParams();

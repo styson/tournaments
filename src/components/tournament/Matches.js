@@ -1,6 +1,6 @@
 import { Button, Form, Row } from 'react-bootstrap';
-import { Error } from './styled/Error';
-import { putItem } from '../dynamo/ApiCalls';
+import { Error } from '../styled/Error';
+import { putItem } from '../../dynamo/ApiCalls';
 import { useEffect, useState } from 'react';
 import Match from './Match';
 import React from 'react';
@@ -34,11 +34,11 @@ const Matches = ({ round, scenarios }) => {
     } else {
       setMatches([]);
     }
-
-    setScenarioList(scenarios.filter(s => s.sk.indexOf(round.sk) === 0));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round]);
+
+  useEffect(() => {
+    setScenarioList(scenarios.filter(s => s.sk.indexOf(round.sk) === 0));
+  }, [scenarios, round.sk]);
 
   function generate() {
     showError(`Generate matches for ${activePlayers.length} players`);
@@ -76,8 +76,16 @@ const Matches = ({ round, scenarios }) => {
   }
 
   function saveMatch(form) {
-    console.log(form)
-    showError(`save`);
+    // console.log(form)
+    // console.log(matches[form.index]);
+    matches[form.index] = form;
+
+    const rnd = { 
+      ...round,
+      matches,
+    }
+    putItem(rnd);
+    showError(`save ${form.index}`);
   }
 
   const [error, setError] = useState('');
@@ -101,7 +109,7 @@ const Matches = ({ round, scenarios }) => {
       </Form>
       <div>
         {matches.map((m, index) => {
-          return <Match match={m} key={index} index={index} handleClick={saveMatch} />;
+          return <Match match={m} key={index} index={index} handleSave={saveMatch} />;
         })}
         {matches.length === 0 && (
           <p>Matches have not been<br/> set for {round.name}.</p>

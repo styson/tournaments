@@ -1,9 +1,9 @@
-import { Box, ExtrasBox } from './styled/Box';
+import { Box, ExtrasBox } from '../styled/Box';
 import { Button, Form, Row } from 'react-bootstrap';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { Error } from './styled/Error';
-import { PlayerList, ExtraPlayerList } from './styled/Lists';
-import { putItem } from '../dynamo/ApiCalls';
+import { Error } from '../styled/Error';
+import { PlayerList, ExtraPlayerList } from '../styled/Lists';
+import { putItem } from '../../dynamo/ApiCalls';
 import { useState, useEffect } from 'react';
 import RankedPlayer from './RankedPlayer';
 import React from 'react';
