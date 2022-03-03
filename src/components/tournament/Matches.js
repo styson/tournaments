@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Match from './Match';
 import React from 'react';
 
-const newMatch = (scenarioList) => {
+const newMatch = (scenarioList, round) => {
   return {
     p1: {},
     p2: {},
@@ -14,10 +14,11 @@ const newMatch = (scenarioList) => {
     p1Side: '', // axis or allied
     p2Side: '', // axis or allied
     scenarioList,
+    round,
   };
 }
 
-const Matches = ({ round, scenarios }) => {
+const Matches = ({ round, scenarios, roundUpdate }) => {
   const [activePlayers, setActivePlayers] = useState([]);
   const [complete, setComplete] = useState(round.matchesComplete || false);
   const [matches, setMatches] = useState([]);
@@ -49,7 +50,7 @@ const Matches = ({ round, scenarios }) => {
 
     activePlayers.forEach((p, n) => {
       if (n === 0 || !!(n && !(n%2))) {
-        match = newMatch(scenarioList);
+        match = newMatch(scenarioList, round.round);
         match['p1'] = p;
         matches.push(match);
       } else {
@@ -76,16 +77,13 @@ const Matches = ({ round, scenarios }) => {
   }
 
   function saveMatch(form) {
-    // console.log(form)
-    // console.log(matches[form.index]);
     matches[form.index] = form;
-
     const rnd = { 
       ...round,
       matches,
     }
     putItem(rnd);
-    showError(`save ${form.index}`);
+    roundUpdate();
   }
 
   const [error, setError] = useState('');

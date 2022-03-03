@@ -42,7 +42,7 @@ const Rankings = ({ round, players, standings }) => {
       return;
     }
 
-    if (standings.length > 0) {
+    if (Array.from(standings).length > 0) {
       setActivePlayers(standings);
       setExtraPlayers([]);
     } else {
