@@ -6,6 +6,7 @@ import AddScenario from '../components/AddScenario';
 import { GetItems } from '../dynamo/ApiCalls';
 import Header from '../components/Header';
 import ScenarioRow from '../components/ScenarioRow';
+import AddScenariosFromFile from '../components/AddScenariosFromFile';
 
 // Amplify.Logger.LOG_LEVEL = 'DEBUG';
 
@@ -57,6 +58,12 @@ export default function Home() {
           </Col>
           <Col md={3}>
             <AddScenario handleAdd={ refresh } />
+          </Col>
+        </Row>
+        <Row className='d-none'>
+          <Col md={9}>
+            <h4>Other possible scenarios</h4>
+            <AddScenariosFromFile />
           </Col>
         </Row>
       </Container>

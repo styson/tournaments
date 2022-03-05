@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import AddPlayer from '../components/AddPlayer';
 import Header from '../components/Header';
 import Player from '../components/Player';
+import AddPlayersFromFile from '../components/AddPlayersFromFile';
 
 export default function Home() {
   const [players, setPlayers] = useState([]);
@@ -54,6 +55,12 @@ export default function Home() {
           </Col>
           <Col md={3}>
             <AddPlayer handleAdd={ refresh } /> 
+          </Col>
+        </Row>
+        <Row className='d-none'>
+          <Col md={9}>
+            <h4>Other possible players</h4>
+            <AddPlayersFromFile />
           </Col>
         </Row>
       </Container>
