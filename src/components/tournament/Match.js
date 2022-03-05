@@ -14,18 +14,20 @@ const selectStyles = {
   }),
 };
 
-export default function Match({ match, index, handleSave }) {
+export default function Match({ match, matchKey, index, handleSave }) {
   const initialFormData = Object.freeze(match);
   const [formData, updateFormData] = useState(initialFormData);
   const [changes, setChanges] = useState(false);
 
   const player1 = match.p1?.name;
+  const player1rank = match.p1?.rank;
   const player2 = match.p2?.name || missing;
+  const player2rank = match.p2?.rank || '';
   let p1Winner = match.p1Winner;
 
   const winnerChange = (e) => {
     setChanges(true);
-    p1Winner = (e.target.id === `winner1${index}`);
+    p1Winner = (e.target.id === `winner1${matchKey}`);
     updateFormData({
       ...formData,
       p1Winner,
@@ -35,8 +37,8 @@ export default function Match({ match, index, handleSave }) {
 
   const sideChange = (e) => {
     setChanges(true);
-    const p1Side = (e.target.id === `allied1${index}`) ? 'Allied' : 'Axis';
-    const p2Side = (e.target.id !== `allied1${index}`) ? 'Allied' : 'Axis';
+    const p1Side = (e.target.id === `allied1${matchKey}`) ? 'Allied' : 'Axis';
+    const p2Side = (e.target.id !== `allied1${matchKey}`) ? 'Allied' : 'Axis';
     updateFormData({
       ...formData,
       p1Side,
@@ -72,18 +74,18 @@ export default function Match({ match, index, handleSave }) {
   });
 
   return (
-    <MatchBox index={index}>
+    <MatchBox key={index}>
       <Row>
         <Col md='6'>
-          <MatchPlayer className=''>{player1}</MatchPlayer>
+          <MatchPlayer className=''>{player1} <sup>{player1rank}</sup></MatchPlayer>
         </Col>
         <Col md='6'>
-        <MatchPlayer textColor={ player2 === missing ? 'red' : 'black'}>{player2}</MatchPlayer>
+        <MatchPlayer textColor={ player2 === missing ? 'red' : 'black'}>{player2} <sup>{player2rank}</sup></MatchPlayer>
         </Col>
       </Row>
       <Form onSubmit={handleSubmit}>
       <Creatable 
-        name={`scenario${index}`} options={options} onChange={selectChange} 
+        name={`scenario${matchKey}`} options={options} onChange={selectChange} 
         styles={selectStyles} placeholder='Scenario...' className='mt-2'
         value = {
           options.filter(option => option.value === formData.scenario.sk)
@@ -92,15 +94,15 @@ export default function Match({ match, index, handleSave }) {
       <Row className='mt-1'>
         <Col md='6'>
           <Form.Check
-            label='Winner' name={`group1${index}`} className='ms-3'
-            type='radio' id={`winner1${index}`} onChange={winnerChange}
+            label='Winner' name={`group1${matchKey}`} className='ms-3'
+            type='radio' id={`winner1${matchKey}`} onChange={winnerChange}
             checked={formData.p1Winner}
           />
         </Col>
         <Col md='6'>
           <Form.Check
-            label='Winner' name={`group1${index}`} className='ms-3'
-            type='radio' id={`winner2${index}`} onChange={winnerChange}
+            label='Winner' name={`group1${matchKey}`} className='ms-3'
+            type='radio' id={`winner2${matchKey}`} onChange={winnerChange}
             checked={!formData.p1Winner}
           />
         </Col>
@@ -108,14 +110,14 @@ export default function Match({ match, index, handleSave }) {
       <Row>
         <Col md='6'>
           <Form.Check
-            label='Allied' name={`group2${index}`} className='ms-3'
-            type='radio' id={`allied1${index}`} onChange={sideChange}
+            label='Allied' name={`group2${matchKey}`} className='ms-3'
+            type='radio' id={`allied1${matchKey}`} onChange={sideChange}
             checked={formData.p1Side === 'Allied'}
           />
         </Col>
         <Col md='6'>
           <Button
-            key={index}
+            key={matchKey}
             size='sm' className='px-1 py-0 float-end'
             variant={changes ? 'success' : 'outline-secondary'}
             type='submit'
@@ -123,8 +125,8 @@ export default function Match({ match, index, handleSave }) {
             Save
           </Button>
           <Form.Check
-            label='Allied' name={`group2${index}`} className='ms-3'
-            type='radio' id={`allied2${index}`} onChange={sideChange}
+            label='Allied' name={`group2${matchKey}`} className='ms-3'
+            type='radio' id={`allied2${matchKey}`} onChange={sideChange}
             checked={formData.p1Side !== 'Allied'}
           />
         </Col>

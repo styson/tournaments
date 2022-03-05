@@ -175,6 +175,7 @@ const Rankings = ({ round, players, standings }) => {
                     isDraggingOver={snapshot.isDraggingOver}
                   >
                     {activePlayers.map((p, index) => {
+                      p.rank = index + 1;
                       return <RankedPlayer key={p.sk} player={p} index={index} showRank={true} />;
                     })}
                     {provided.placeholder}
@@ -196,6 +197,7 @@ const Rankings = ({ round, players, standings }) => {
                     isDragDisabled={complete}
                   >
                     {extraPlayers.map((p, index) => {
+                      p.rank = index + 1;
                       return <RankedPlayer key={p.sk} player={p} index={index} showRank={false} />;
                     })}
                     {provided.placeholder}

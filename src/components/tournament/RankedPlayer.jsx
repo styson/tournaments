@@ -15,7 +15,7 @@ export default class RankedPlayer extends React.Component {
               {...provided.dragHandleProps}
               isDragging={snapshot.isDragging}
             >
-              {this.props.player.name}
+              {this.props.player.name} <sup>{this.props.player.rank}</sup>
               <Badge bg='secondary' className={`float-end ${this.props.showRank ? '' : 'd-none'}`}>
                 {this.props.index+1}
               </Badge>              
