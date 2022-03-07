@@ -197,7 +197,7 @@ const Rankings = ({ round, players, standings }) => {
                     isDragDisabled={complete}
                   >
                     {extraPlayers.map((p, index) => {
-                      p.rank = index + 1;
+                      p.rank = index + 1001;
                       return <RankedPlayer key={p.sk} player={p} index={index} showRank={false} />;
                     })}
                     {provided.placeholder}

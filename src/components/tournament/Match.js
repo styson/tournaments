@@ -20,9 +20,9 @@ export default function Match({ match, matchKey, index, handleSave }) {
   const [changes, setChanges] = useState(false);
 
   const player1 = match.p1?.name;
-  const player1rank = match.p1?.rank;
+  // const player1rank = match.p1?.rank;
   const player2 = match.p2?.name || missing;
-  const player2rank = match.p2?.rank || '';
+  // const player2rank = match.p2?.rank || '';
   let p1Winner = match.p1Winner;
 
   const winnerChange = (e) => {
@@ -77,10 +77,10 @@ export default function Match({ match, matchKey, index, handleSave }) {
     <MatchBox key={index}>
       <Row>
         <Col md='6'>
-          <MatchPlayer className=''>{player1} <sup>{player1rank}</sup></MatchPlayer>
+          <MatchPlayer className=''>{player1}</MatchPlayer>
         </Col>
         <Col md='6'>
-        <MatchPlayer textColor={ player2 === missing ? 'red' : 'black'}>{player2} <sup>{player2rank}</sup></MatchPlayer>
+        <MatchPlayer textColor={ player2 === missing ? 'red' : 'black'}>{player2}</MatchPlayer>
         </Col>
       </Row>
       <Form onSubmit={handleSubmit}>

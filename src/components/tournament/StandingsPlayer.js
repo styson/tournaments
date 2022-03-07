@@ -11,8 +11,8 @@ const StandingsPlayer = ({ player }) => {
   return (
     <>
       <tr>
-        <td>{player.name} <sup>{player.rank}</sup></td>
-        <td>{player.wins}</td>
+        <td>{player.name}</td>
+        <td>{player.points}</td>
         <td>
           {rds.map((r, index) => {
             const game = player.rounds[r];

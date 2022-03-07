@@ -1,6 +1,6 @@
 import { API } from 'aws-amplify';
 import { Col, Container, Row, Tabs, Tab } from 'react-bootstrap';
-// import { putItem } from '../dynamo/ApiCalls';
+import { putItem } from '../dynamo/ApiCalls';
 import { useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import Header from '../components/Header';
@@ -46,31 +46,46 @@ export default function Tournament() {
   }
 
   function updateStandings() {
-    // console.log('updateStandings', players.length, rounds.length)
+    console.log('updateStandings', players.length, rounds.length)
+    let cs = {};
     players.forEach((p, n) => {
-      if (standings[p.sk] === undefined) {
-        standings[p.sk] = {
-          name: p.name,
-          rank: p.rank,
-          rounds: {},
-        };
-      }
+      // console.log(`adding ${p.name}`);
+      cs[p.sk] = {
+        name: p.name,
+        rank: 0,
+        points: 0,
+        wins: 0,
+        rounds: {},        
+      };
     });
 
     rounds.forEach((r, n) => {
       // console.log(`round ${r.round}`);
+
       if (r.matches !== undefined) {
         r.matches.forEach((m, x) => {
+          // console.log(`match ${x} ${m.p1.name} vs ${m.p2.name}`);
+          if (m.p1Winner) {
+            cs[m.p1.sk].wins += 1;
+            cs[m.p1.sk].points += 10 + cs[m.p2.sk].wins;
+          } else {
+            cs[m.p2.sk].wins += 1;
+            cs[m.p2.sk].points += 10 + cs[m.p1.sk].wins;
+          }
+
+          cs[m.p1.sk].rank = r.activePlayers.find(_ => _.sk === m.p1.sk).rank;
+          cs[m.p2.sk].rank = r.activePlayers.find(_ => _.sk === m.p2.sk).rank;
+
           const p1Game = {
             win: m.p1Winner ? 1 : 0,
             scenario: m.scenario,
             side: m.p1Side,
             opponent: m.p2,
           }
-          if(standings[m.p1.sk] === undefined) {
-            standings[m.p1.sk] = { name: m.p1.name, rank: m.p1.rank, rounds: {} };
+          if(cs[m.p1.sk] === undefined) {
+            cs[m.p1.sk] = { name: m.p1.name, rank: m.p1.rank, rounds: {} };
           }
-          standings[m.p1.sk].rounds[`${r.round}`] = p1Game;
+          cs[m.p1.sk].rounds[`${r.round}`] = p1Game;
 
           const p2Game = {
             win: !m.p1Winner ? 1 : 0,
@@ -78,32 +93,34 @@ export default function Tournament() {
             side: m.p2Side,
             opponent: m.p1,
           }
-          if(standings[m.p2.sk] === undefined) {
-            standings[m.p2.sk] = { name: m.p2.name, rank: m.p2.rank, rounds: {} };
+          if(cs[m.p2.sk] === undefined) {
+            cs[m.p2.sk] = { name: m.p2.name, rank: m.p2.rank, rounds: {} };
           }
-          standings[m.p2.sk].rounds[`${r.round}`] = p2Game;
+          cs[m.p2.sk].rounds[`${r.round}`] = p2Game;
         });
-      }
-      if (r['extraPlayers'] !== undefined) {
-        r['extraPlayers'].forEach((m, x) => {
-          const missedRound = {
-            win: 0, scenario: { name: 'No game this round.' },
-            side: '', opponent: {},
-          }
-          standings[m.sk].rounds[`${r.round}`] = missedRound;
-        });
+        if (r['extraPlayers'] !== undefined) {
+          r['extraPlayers'].forEach((m, x) => {
+            const missedRound = {
+              win: 0, scenario: { name: 'No game this round.' },
+              side: '', opponent: {},
+            }
+            cs[m.sk].rounds[`${r.round}`] = missedRound;
+            cs[m.sk].rank = m.rank;
+          });
+        }
       }
     });
 
     const pl = [];
-    const s = Object.keys(standings);
+    const s = Object.keys(cs);
     s.forEach(sk => {
-      const p = standings[sk];
+      const p = cs[sk];
       const record = {
         sk,
         name: p.name,
         rank: p.rank,
-        wins: 0,
+        points: p.points,
+        wins: p.wins,
         sort: 0,
         rounds: {},
       };
@@ -112,29 +129,31 @@ export default function Tournament() {
       rds.forEach(r => {
         const rd = p.rounds[r];
         record.rounds[r] = { win: rd.win, opp: rd.opponent.name || '' };
-        if(rd.win === 1) {
-          record.wins += 1;
-        }
-        
-        record.sort += rd.win;
-        if(rd.opponent.name === undefined) {
-          record.sort -= .1;
-        }
-        record.sort -= (p.rank * .001);
-        // console.log(`opp ${rd.opponent.name}`)
-        // console.log(`sort ${record.sort}`)
       });
 
-      // console.log(record)
       pl.push(record)
     });
 
-    const newOrderedPlayers = pl.sort((a, b) => a.sort < b.sort ? 1 : -1);
+    const newOrderedPlayers = pl.sort((a, b) => {
+      if (a.points === b.points) {
+        return a.rank > b.rank ? 1 : -1;  
+      }
+      return a.points < b.points ? 1 : -1;
+    });
+
     setOrderedPlayers(newOrderedPlayers);
 
-    setStandings(standings);
-    tournament.standings = standings;
-    setTournament(tournament);
+    // tournament.standings = cs;
+    // setTournament(tournament);
+    // console.log(JSON.stringify(cs))
+
+    const tourney = { 
+      ...tournament,
+      standings: cs,
+    }
+    setTournament(tourney);
+    putItem(tourney);
+    console.log(JSON.stringify(tourney.standings))
   }
 
   useMemo(() => {
@@ -163,29 +182,31 @@ export default function Tournament() {
           </Col>
         </Row>
         <Row>
-          <Tabs activeKey={tab} onSelect={(t) => setTab(t)} id='tabs' className='mt-3'>
-            { rounds.map((r, index) => (
-              <Tab key={index} eventKey={r.name} title={r.name}>
-                <Row>
-                  <Col md='3' className='mt-2'>
-                    <div className='ms-3 me-1'>
-                      <Rankings round={r} players={players} standings={standings} />
-                    </div>
-                  </Col>
-                  <Col md='4' className='mt-2'>
-                    <div className='ms-3 me-1'>
-                      <Matches round={r} scenarios={scenarios} roundUpdate={roundUpdate} />
-                    </div>
-                  </Col>
-                  <Col md='4' className='mt-2'>
-                    <div className='mx-3'>
-                      <Standings players={orderedPlayers} />
-                    </div>
-                  </Col>
-                </Row>
-              </Tab>
-            ))}
-          </Tabs>
+          <Col md='7' className='mt-3'>
+            <Tabs activeKey={tab} onSelect={(t) => setTab(t)} id='tabs' className='mt-3'>
+              { rounds.map((r, index) => (
+                <Tab key={index} eventKey={r.name} title={r.name}>
+                  <Row>
+                    <Col md='5' className='mt-2'>
+                      <div className='ms-3 me-1'>
+                        <Rankings round={r} players={players} standings={standings} />
+                      </div>
+                    </Col>
+                    <Col md='7' className='mt-2'>
+                      <div className='ms-3 me-1'>
+                        <Matches round={r} scenarios={scenarios} roundUpdate={roundUpdate} />
+                      </div>
+                    </Col>
+                  </Row>
+                </Tab>
+              ))}
+            </Tabs>
+          </Col>
+          <Col md='5' className='mt-3'>
+            <div className='mx-3'>
+              <Standings players={orderedPlayers} />
+            </div>
+          </Col>
         </Row>
      </Container>
     </>
