@@ -14,9 +14,8 @@ export const delRoundScenario = async (pk, sk) => {
 
 export const getItem = async (pk, sk, callback) => {
   API.get('apiDirector', `/director/object/${pk}/${sk}`)
-    .then(res => {
-      callback(res);
-    });
+    .then(res => callback(res))
+    .catch(error => console.log(error.response.data));
 }
 
 export const putRoundScenario = async (scen) => {

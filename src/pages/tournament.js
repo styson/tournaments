@@ -46,11 +46,15 @@ export default function Tournament() {
   }
 
   function updateStandings() {
+    if (players.length === 0 || rounds.length === 0) return;
     console.log('updateStandings', players.length, rounds.length)
+
     let cs = {};
     players.forEach((p, n) => {
       // console.log(`adding ${p.name}`);
       cs[p.sk] = {
+        pk: p.pk,
+        sk: p.sk,
         name: p.name,
         rank: 0,
         points: 0,
@@ -116,7 +120,8 @@ export default function Tournament() {
     s.forEach(sk => {
       const p = cs[sk];
       const record = {
-        sk,
+        pk: p.pk,
+        sk: p.sk,
         name: p.name,
         rank: p.rank,
         points: p.points,
@@ -143,17 +148,14 @@ export default function Tournament() {
 
     setOrderedPlayers(newOrderedPlayers);
 
-    // tournament.standings = cs;
-    // setTournament(tournament);
-    // console.log(JSON.stringify(cs))
-
     const tourney = { 
       ...tournament,
       standings: cs,
     }
     setTournament(tourney);
+
     putItem(tourney);
-    console.log(JSON.stringify(tourney.standings))
+    // console.log(JSON.stringify(tourney.standings))
   }
 
   useMemo(() => {
@@ -189,7 +191,7 @@ export default function Tournament() {
                   <Row>
                     <Col md='5' className='mt-2'>
                       <div className='ms-3 me-1'>
-                        <Rankings round={r} players={players} standings={standings} />
+                        <Rankings round={r} players={players} standings={standings} tournament={tournament} />
                       </div>
                     </Col>
                     <Col md='7' className='mt-2'>

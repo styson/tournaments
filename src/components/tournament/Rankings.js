@@ -3,12 +3,12 @@ import { Button, Form, Row } from 'react-bootstrap';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Error } from '../styled/Error';
 import { PlayerList, ExtraPlayerList } from '../styled/Lists';
-import { putItem } from '../../dynamo/ApiCalls';
+import { getItem, putItem } from '../../dynamo/ApiCalls';
 import { useState, useEffect } from 'react';
 import RankedPlayer from './RankedPlayer';
 import React from 'react';
 
-const Rankings = ({ round, players, standings }) => {
+const Rankings = ({ round, players, standings, tournament }) => {
   const [complete, setComplete] = useState(round.rankingsComplete || false);
 
   const [activePlayers, setActivePlayers] = useState([]);
@@ -27,6 +27,15 @@ const Rankings = ({ round, players, standings }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round, players]);
 
+  useEffect(() => {
+    const rnd = { 
+      ...round,
+      activePlayers,
+      extraPlayers,
+    }
+    putItem(rnd);
+  }, [round, activePlayers, extraPlayers]);
+
   function updateRound() {
     const rnd = { 
       ...round,
@@ -36,26 +45,36 @@ const Rankings = ({ round, players, standings }) => {
     putItem(rnd);
   }
 
+  function resetWithStandings(res) {
+    if (res.standings === {}) return;
+    const pl = [];
+    const s = Object.keys(res.standings);
+    s.forEach(p => {
+      pl.push(res.standings[p]);
+    });
+
+    const orderedPlayers = pl.sort((a, b) => {
+      if (a.points === b.points) {
+        return a.rank > b.rank ? 1 : -1;  
+      }
+      return a.points < b.points ? 1 : -1;
+    });
+
+    setActivePlayers(orderedPlayers);
+    setExtraPlayers([]);
+  }
+
   function resetPlayers() {
     if (complete) {
       showError(`Can't reset since Round is complete.`);
       return;
     }
 
-    if (Array.from(standings).length > 0) {
-      setActivePlayers(standings);
-      setExtraPlayers([]);
-    } else {
-      setActivePlayers(players);      
-      setExtraPlayers([]);
-    }
+    const getData = async () => {
+      getItem(tournament.pk, tournament.sk, resetWithStandings);
+    };
 
-    const rnd = { 
-      ...round,
-      activePlayers,
-      extraPlayers,
-    }
-    putItem(rnd);
+    getData();
   }
 
   function clearPlayers() {
@@ -69,8 +88,8 @@ const Rankings = ({ round, players, standings }) => {
 
     const rnd = { 
       ...round,
-      activePlayers: [],
-      extraPlayers: [],
+      activePlayers,
+      extraPlayers,
     }
     putItem(rnd);
   }
