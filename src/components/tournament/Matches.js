@@ -1,6 +1,6 @@
 import { Button, Form, Row } from 'react-bootstrap';
 import { Error } from '../styled/Error';
-import { putItem } from '../../dynamo/ApiCalls';
+import { getItem, putItem } from '../../dynamo/ApiCalls';
 import { useEffect, useState } from 'react';
 import Match from './Match';
 import React from 'react';
@@ -41,7 +41,28 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
     setScenarioList(scenarios.filter(s => s.sk.indexOf(round.sk) === 0));
   }, [scenarios, round.sk]);
 
+  function getPlayers() {
+    const getData = async () => {
+      getItem(round.pk, round.sk, updatePlayers);
+    };
+
+    getData();
+  }
+
+  function updatePlayers(res) {
+    console.log('updatePlayers');
+    if (res.activePlayers.length > 0) {
+      setActivePlayers(res.activePlayers);
+    }
+  }
+
   function generate() {
+    if (activePlayers.length === 0) {
+      showError(`Updating players for matches`);
+      getPlayers();
+      if (activePlayers.length === 0) return;
+    }
+
     showError(`Generate matches for ${activePlayers.length} players`);
     let matches = [];
     let match = {};

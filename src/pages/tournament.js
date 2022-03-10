@@ -65,6 +65,20 @@ export default function Tournament() {
 
     rounds.forEach((r, n) => {
       // console.log(`round ${r.round}`);
+      if (r.matches === undefined) {
+        return;
+      }
+
+      if (!r.hasOwnProperty('activePlayers')) {
+        r.activePlayers = [];
+      }
+      if (!r.hasOwnProperty('extraPlayers')) {
+        r.extraPlayers = [];
+      }
+      if (r.activePlayers.length === 0 && r.extraPlayers.length === 0) {
+        r.activePlayers = players;
+        putItem(r);
+      }
 
       if (r.matches !== undefined) {
         r.matches.forEach((m, x) => {
