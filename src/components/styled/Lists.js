@@ -19,6 +19,8 @@ const ScenarioList = styled.div`
   background-color: ${props => (props.isDraggingOver ? 'lightgray' : 'white')};
   flex-grow: 1;
   min-height: 100px;
+  max-height: 600px;
+  overflow-y: auto;
 `;
 
 export {

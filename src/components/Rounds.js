@@ -8,11 +8,6 @@ import Round from './Round';
 
 const Rounds = ({ tournament, data }) => {
   const [tData, setData] = useState(data);
-  const [tourney, setTournament] = useState({});
-
-  useEffect(() => {
-    setTournament(tournament);
-  }, [tournament]);
 
   function addRound(roundArray, round) {
     if (!roundArray.includes(round)) {
@@ -25,7 +20,7 @@ const Rounds = ({ tournament, data }) => {
     const rounds = tData.rounds;
     const x = Object.keys(rounds).length;
     const newRound = {
-      pk: tourney.sk,
+      pk: tournament.sk,
       sk: `ROUN_${x}_${uuidv4()}`,
       name: `Round ${x}`, 
     };
@@ -225,7 +220,7 @@ const Rounds = ({ tournament, data }) => {
             className='mb-1'
             size='sm'
             onClick={() => addNewRound()}
-            disabled={tourney.name === '' ? 'disabled' : '' }                
+            disabled={tournament.name === '' ? 'disabled' : '' }                
           >
             Add Round
           </Button>
@@ -233,12 +228,28 @@ const Rounds = ({ tournament, data }) => {
       </Row>
       <Row>
         <DragDropContext onDragEnd={onDragEnd}>
-          {tData.roundOrder.map(roundId => {
-            const round = tData.rounds[roundId];
-            // console.log(round)
-            const roundScenarios = round.scenarioSks.map(scenarioSk => tData.scenarios[scenarioSk]);
-            return <Round key={round.sk} round={round} scenarios={roundScenarios} />;
-          })}
+          <Col md='3' className='mt-3'>
+            {tData.roundOrder.map((roundId, index) => {
+              const round = tData.rounds[roundId];
+              if (round.name !== 'Scenarios') return;
+              const roundScenarios = round.scenarioSks.map(scenarioSk => tData.scenarios[scenarioSk]);
+              return (
+                <Round key={round.sk} round={round} scenarios={roundScenarios} colSize='12' />
+              );
+            })}
+          </Col>
+          <Col md='9' className='mt-3'>
+            <Row>
+              {tData.roundOrder.map((roundId, index) => {
+                const round = tData.rounds[roundId];
+                if (round.name === 'Scenarios') return;
+                const roundScenarios = round.scenarioSks.map(scenarioSk => tData.scenarios[scenarioSk]);
+                return (
+                  <Round key={round.sk} round={round} scenarios={roundScenarios} colSize='4' />
+                );
+              })}
+            </Row>
+          </Col>
         </DragDropContext>
       </Row>
     </>

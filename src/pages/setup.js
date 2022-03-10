@@ -48,7 +48,7 @@ export default function Setup() {
   }
 
   const getAllScenarios = async () => {
-    GetItems('SCENARIOS', 'name', setAllScenarios);
+    GetItems('SCENARIOS', 'id', setAllScenarios);
   }
 
   const putTournamentPlayer = async (p) => {

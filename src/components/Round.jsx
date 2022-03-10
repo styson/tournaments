@@ -9,7 +9,7 @@ import Scenario from './scenario';
 export default class Round extends React.Component {
   render() {
     return (
-      <Col md='3'>
+      <Col md={this.props.colSize}>
         <Box>
           <Title>{this.props.round.name}</Title>
           <Droppable droppableId={this.props.round.sk} isDropDisabled={(this.props.round.name==='Scenarios')}>
