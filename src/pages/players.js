@@ -8,7 +8,7 @@ import Header from '../components/Header';
 import Player from '../components/Player';
 import AddPlayersFromFile from '../components/AddPlayersFromFile';
 
-const defaultPlaceHolder = 'Enter Rating...';
+const ratingPlaceHolder = 'Enter Rating...';
 
 export default function Home() {
   const [players, setPlayers] = useState([]);
@@ -28,7 +28,7 @@ export default function Home() {
   const [formTitle, setFormTitle] = useState('Add Player');
   const [playerName, setPlayerName] = useState('');
   const [playerRating, setPlayerRating] = useState('');
-  const [placeHolder, setPlaceHolder] = useState(defaultPlaceHolder);
+  const [placeHolder, setPlaceHolder] = useState(ratingPlaceHolder);
   const [playerEmail, setPlayerEmail] = useState('');
   const [error, setError] = useState('');
 
@@ -82,7 +82,7 @@ export default function Home() {
       mode:'cors',
     })
     .then((response) => {
-      setPlaceHolder(defaultPlaceHolder);
+      setPlaceHolder(ratingPlaceHolder);
       return response.json();
     })
     .then(function(data) {

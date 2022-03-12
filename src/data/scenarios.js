@@ -22,17 +22,17 @@ const scenarios = [
     { "id": "FE134", "name": "Kecskemet Clash" },
     { "id": "FE21", "name": "Tiger of Vitebsk" },
     { "id": "FE5", "name": "Beyond The Call Of Duty" },
-    { "id": "FE69", "name": "Tiger Woods" },
+    { "id": "FE69", "name": "Tiger Woods", "scenario_id": "57715" },
     { "id": "FE82", "name": "Mokra Melee" },
     { "id": "HazMo10", "name": "Fresh Grist" },
     { "id": "HazMo14", "name": "A Sisyphean Task" },
     { "id": "HazMo4", "name": "Kids These Days" },
     { "id": "HG12", "name": "Bumps Along The Tiddum Road" },
     { "id": "J41", "name": "By Ourselves" },
-    { "id": "OA15", "name": "Shattering The Line" },
+    { "id": "OA15", "scenario_id":"56551","sc_id":"OA15", "name": "Shattering The Line","attacker":"Russian","defender":"German","maps":["22","32"],"playings":[{"totalGames":"4","defender_wins":"3","attacker_wins":"1"}] },
     { "id": "ON10", "name": "Chateau Of Death" },
     { "id": "ON9", "name": "An Unexpected Complication" },
-    { "id": "WCW2", "name": "Scotch On The Rocks" }
+    { "id": "WCW2", "name": "Scotch On The Rocks" },
   ];
 
 export default scenarios;
