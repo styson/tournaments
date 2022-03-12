@@ -43,7 +43,7 @@ export default function AddScenariosFromFile() {
           )
         } else {
           return (
-            <></>
+            <span key={index}></span>
           )
         }
       })}

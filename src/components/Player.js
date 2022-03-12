@@ -1,16 +1,24 @@
 import { Button } from 'react-bootstrap';
 import React from 'react';
 
-const Player = ({ player, handleDelete }) => {
+const Player = ({ player, handleDelete, handleRowClick }) => {
   return (
-    <tr className='player'>
+    <tr
+      className='player'
+      onClick={() => handleRowClick(player.pk, player.sk)}
+    >
       <td>{player.name}</td>
-      <td>{player.email}</td>
-      <td className=''>
+      <td>{player.rating}</td>
+      <td>{player.email}
         <Button 
+          key={`b${player.sk}`}
+          className='float-end me-2'
           size='sm'
           variant='outline-secondary'
-          onClick={() => handleDelete(player.pk,player.sk)}
+          onClick={(e) => {
+            e.preventDefault();
+            handleDelete(player.pk, player.sk);
+          }}
         >
           X
         </Button>

@@ -74,10 +74,10 @@ export default function Match({ match, matchKey, index, handleSave }) {
   });
 
   return (
-    <MatchBox key={index}>
+    <MatchBox key={matchKey}>
       <Row>
         <Col md='6'>
-          <MatchPlayer className=''>{player1}</MatchPlayer>
+          <MatchPlayer>{player1}</MatchPlayer>
         </Col>
         <Col md='6'>
         <MatchPlayer textColor={ player2 === missing ? 'red' : 'black'}>{player2}</MatchPlayer>

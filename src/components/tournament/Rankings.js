@@ -22,12 +22,17 @@ const Rankings = ({ round, players, standings, tournament }) => {
       setActivePlayers(round['activePlayers']);
     } else {
       setActivePlayers(players);
-      updateRound(complete);
+      updateRound();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round, players]);
 
   useEffect(() => {
+    if(round.round === undefined) return;
+    console.log(`useEffect round ${round.round} with ${activePlayers.length} active players`);
+
+    // if (round.hasOwnProperty('extraPlayers')) {
+
     const rnd = { 
       ...round,
       activePlayers,
@@ -37,6 +42,12 @@ const Rankings = ({ round, players, standings, tournament }) => {
   }, [round, activePlayers, extraPlayers]);
 
   function updateRound() {
+    if (round.rankingsComplete || complete) {
+      console.log(`update round ${round.round} players failed since complete [${complete}]`);
+      return;
+    }
+
+    console.log(`updateRound ${round.round} with ${activePlayers.length} active players`);
     const rnd = { 
       ...round,
       activePlayers,
@@ -47,6 +58,12 @@ const Rankings = ({ round, players, standings, tournament }) => {
 
   function resetWithStandings(res) {
     if (res.standings === {}) return;
+
+    if (round.rankingsComplete || complete) {
+      console.log(`reset round ${round.round} players failed since complete [${complete}]`);
+      return;
+    }
+
     const pl = [];
     const s = Object.keys(res.standings);
     s.forEach(p => {
@@ -86,6 +103,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
     setActivePlayers([]);
     setExtraPlayers([]);
 
+    console.log(`clearPlayers ${round.round} with ${activePlayers.length} active players`);
     const rnd = { 
       ...round,
       activePlayers,
@@ -96,6 +114,8 @@ const Rankings = ({ round, players, standings, tournament }) => {
 
   function completeRound(checked) {
     setComplete(checked);
+    round.rankingsComplete = checked;
+    console.log(`completeRound ${round.round} with ${activePlayers.length} active players`);
     const rnd = { 
       ...round,
       rankingsComplete: checked,
@@ -112,6 +132,11 @@ const Rankings = ({ round, players, standings, tournament }) => {
 
     players.splice(source.index, 1);
     players.splice(destination.index, 0, player);
+
+    if (round.rankingsComplete || complete) {
+      console.log(`reorder round ${round.round} players failed since complete [${complete}]`);
+      return;
+    }
 
     if (active) {
       setActivePlayers(players); 
@@ -230,7 +255,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
           <Button
             id='clear-players'
             size='sm'
-            className='flex-grow-1 me-1 mb-2'
+            className={`flex-grow-1 me-1 mb-2 ${complete ? 'd-none' : ''}`}
             variant='outline-danger'
             onClick={clearPlayers}
             disabled={complete}
@@ -240,7 +265,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
           <Button
             id='reset-players'
             size='sm'
-            className='flex-grow-1 ms-1 mb-2'
+            className={`flex-grow-1 ms-1 mb-2 ${complete ? 'd-none' : ''}`}
             variant='outline-secondary'
             onClick={resetPlayers}
             disabled={complete}

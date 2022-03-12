@@ -42,7 +42,6 @@ export default function Home() {
                 <tr>
                   <th>Scenario Id</th>
                   <th>Name</th>
-                  <th></th>
                 </tr>
               </thead>            
               <tbody>

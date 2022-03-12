@@ -41,10 +41,11 @@ const Tournament = ({ tournament, handleDelete }) => {
         </Link>        
       </td>
       <td>{players.length}</td>
-      <td>{rounds.length}</td>
-      <td className=''>
+      <td>
+        {rounds.length}
         <Button 
           size='sm'
+          className='float-end me-2'
           variant='outline-secondary'
           onClick={() => handleDelete(tournament.pk,tournament.sk)}
           disabled={!canDelete}

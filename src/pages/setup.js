@@ -58,6 +58,7 @@ export default function Setup() {
         sk: `${p.sk}`,
         name: p.name,
         rank: p.rank,
+        rating: p.rating,
       }
     });
   }
@@ -65,6 +66,19 @@ export default function Setup() {
   const refresh = async () => {
     await getTournaments();
   }
+
+  const handleDelete = async (index, pk, sk) => {
+    API.del('apiDirector', `/director/object/${pk}/${sk}`)
+      .then(res => {
+        players.splice(index, 1);
+
+        players.forEach((p, idx) => {
+          p.rank = idx+1;
+        });
+
+        setPlayers([...players]);
+      });
+  };
 
   const addPlayer = async (sk) => {
     if(sk === 0) return;
@@ -77,7 +91,8 @@ export default function Setup() {
         pk: data.pk,
         sk: data.sk,
         name: data.name,
-        rank: (players.length + 1)
+        rank: (players.length + 1),
+        rating: data.rating,
       }
       players.push(newPlayer);
       setPlayers([...players]);
@@ -171,8 +186,10 @@ export default function Setup() {
     scenarios.forEach((s, idx) => {
       const i = s.sk.indexOf('_SCEN_');
       const roundSk = s.sk.substr(0,i);
-      // const round = data.rounds[roundSk];
-      data.rounds[roundSk].scenarioSks.push(s.sk.substr(i+1));
+      const round = data.rounds[roundSk];
+      if (round) {
+        data.rounds[roundSk].scenarioSks.push(s.sk.substr(i+1));
+      }
     });
     setData(data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -242,13 +259,15 @@ export default function Setup() {
           <Tabs activeKey={tab} onSelect={(t) => setTab(t)} id='tabs' className='mt-3 mb-3'>
             <Tab eventKey='players' title={`Players - ${players.length}`}>
               <Row>
-                <Col md='3' className='mt-3'>
+                <Col md='5' className='mt-3'>
                   <h3>Tournament Players</h3>
                   <Table id='playerTable' striped bordered hover size='sm'>
                     <thead>
                       <tr>
                         <th>Name</th>
+                        <th>Rating</th>
                         <th>Rank</th>
+                        <th>Remove</th>
                       </tr>
                     </thead>            
                     <tbody>
@@ -256,6 +275,7 @@ export default function Setup() {
                         return (
                           <tr key={idx} data-index={idx}>
                             <td>{d.name}</td>
+                            <td>{d.rating}</td>
                             <td>
                               {d.rank}
                               <Button
@@ -275,6 +295,22 @@ export default function Setup() {
                                 disabled={d.rank === 1 ? 'disabled' : '' }
                               >
                                 ⋀
+                              </Button>
+                            </td>
+                            <td>
+                              <Button 
+                                key={`b${d.sk}`}
+                                className='float-end'
+                                size='sm'
+                                title={`${d.pk} ${d.sk}`}
+                                variant='outline-secondary'
+                                onClick={(e) => {
+                                  e.preventDefault();
+
+                                  handleDelete(idx, active.sk, d.sk);
+                                }}
+                              >
+                                X
                               </Button>
                             </td>
                           </tr>

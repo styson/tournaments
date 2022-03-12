@@ -41,7 +41,13 @@ export default function Tournament() {
       });
   }
 
-  function roundUpdate() {
+  function roundUpdate(rnd) {
+    if (rnd) {
+      let round = rounds.find(_ => _.round === rnd.round);
+      console.log(`round ${round.round} changing, from ${round.matches.length} matches to ${rnd.matches.length} matches`);
+      const index = rounds.findIndex(_ => _.sk === round.sk);
+      rounds[index] = rnd;
+    }
     updateStandings();
   }
 
@@ -76,6 +82,8 @@ export default function Tournament() {
         r.extraPlayers = [];
       }
       if (r.activePlayers.length === 0 && r.extraPlayers.length === 0) {
+        console.log(`updateStandings ${r.round} with ${r.activePlayers.length} active players`);
+        console.log(`updateStandings ${r.round} with ${r.extraPlayers.length} active players`);
         r.activePlayers = players;
         putItem(r);
       }

@@ -63,7 +63,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
       if (activePlayers.length === 0) return;
     }
 
-    showError(`Generate matches for ${activePlayers.length} players`);
+    showError(`Generated matches for ${activePlayers.length} players`);
     let matches = [];
     let match = {};
     
@@ -80,11 +80,21 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
     })
 
     setMatches(matches);
+    const rnd = { 
+      ...round,
+      matches,
+    }
+    putItem(rnd);
   }
 
   function reset() {
     showError('reset matches');
     setMatches([]);
+    const rnd = { 
+      ...round,
+      matches,
+    }
+    putItem(rnd);
   }
 
   function completeMatches(checked) {
@@ -95,6 +105,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
       matchesComplete: checked,
     }
     putItem(rnd);
+    roundUpdate(rnd);
   }
 
   function saveMatch(form) {
@@ -129,7 +140,8 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
       </Form>
       <div>
         {matches.map((m, index) => {
-          return <Match match={m} key={index + round.round * 10} matchKey={index + round.round * 10} index={index} handleSave={saveMatch} />;
+          const matchKey = `${index}${round.round * 10}`;
+          return <Match match={m} key={`m${matchKey}`} matchKey={matchKey} index={index} handleSave={saveMatch} />;
         })}
         {matches.length === 0 && (
           <p>Matches have not been<br/> set for {round.name}.</p>
@@ -139,7 +151,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
         <Button
           id='reset-matches'
           size='sm'
-          className='flex-grow-1 me-1 mb-2'
+          className={`flex-grow-1 me-1 mb-2 ${complete ? 'd-none' : ''}`}
           variant='outline-secondary'
           onClick={reset}
           disabled={complete}
@@ -149,7 +161,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
         <Button
           id='generate-matches'
           size='sm'
-          className='flex-grow-1 ms-1 mb-2'
+          className={`flex-grow-1 ms-1 mb-2 ${complete ? 'd-none' : ''}`}
           variant='outline-success'
           onClick={generate}
           disabled={complete}

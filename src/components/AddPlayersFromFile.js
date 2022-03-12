@@ -42,7 +42,7 @@ export default function AddPlayersFromFile() {
           )
         } else {
           return (
-            <></>
+            <span key={index}></span>
           )
         }
       })}

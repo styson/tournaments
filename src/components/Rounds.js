@@ -23,6 +23,7 @@ const Rounds = ({ tournament, data }) => {
       pk: tournament.sk,
       sk: `ROUN_${x}_${uuidv4()}`,
       name: `Round ${x}`, 
+      round: x, 
     };
 
     putItem(newRound);
