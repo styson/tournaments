@@ -1,7 +1,7 @@
 import { delRoundScenario, putRoundScenario, putItem } from '../dynamo/ApiCalls';
 import { Button, Col, Row } from 'react-bootstrap';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import React from 'react';
 import Round from './Round';
@@ -232,7 +232,11 @@ const Rounds = ({ tournament, data }) => {
           <Col md='3' className='mt-3'>
             {tData.roundOrder.map((roundId, index) => {
               const round = tData.rounds[roundId];
-              if (round.name !== 'Scenarios') return;
+              if (round.name !== 'Scenarios') {
+                return (
+                  <></>
+                );
+              }
               const roundScenarios = round.scenarioSks.map(scenarioSk => tData.scenarios[scenarioSk]);
               return (
                 <Round key={round.sk} round={round} scenarios={roundScenarios} colSize='12' />
@@ -243,7 +247,11 @@ const Rounds = ({ tournament, data }) => {
             <Row>
               {tData.roundOrder.map((roundId, index) => {
                 const round = tData.rounds[roundId];
-                if (round.name === 'Scenarios') return;
+                if (round.name === 'Scenarios') {
+                  return (
+                    <></>
+                  );
+                }
                 const roundScenarios = round.scenarioSks.map(scenarioSk => tData.scenarios[scenarioSk]);
                 return (
                   <Round key={round.sk} round={round} scenarios={roundScenarios} colSize='4' />

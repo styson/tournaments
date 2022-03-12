@@ -21,6 +21,7 @@ export default function Home() {
 
   useEffect(() => {
     refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // form state

@@ -14,6 +14,7 @@ export default function AddScenariosFromFile() {
 
   useEffect(() => {
     refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const add = async (id, name) => {
