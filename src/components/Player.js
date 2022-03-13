@@ -7,9 +7,11 @@ const Player = ({ player, handleDelete, handleRowClick }) => {
       className='player'
       onClick={() => handleRowClick(player.pk, player.sk)}
     >
-      <td>{player.name}</td>
-      <td>{player.rating}</td>
-      <td>{player.email}
+      <td>{player.name || 'no name!'}</td>
+      <td>{player.rating || ''}</td>
+      <td>{player.email || ''}</td>
+      <td>{player.phone || ''}</td>
+      <td>{player.location || ''}
         <Button 
           key={`b${player.sk}`}
           className='float-end me-2'

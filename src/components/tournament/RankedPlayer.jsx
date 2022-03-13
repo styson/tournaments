@@ -16,6 +16,9 @@ export default class RankedPlayer extends React.Component {
               isDragging={snapshot.isDragging}
             >
               {this.props.player.name}
+              <sup className={`ms-1 fw-lighter ${this.props.showRating ? '' : 'd-none'}`}>
+                ({this.props.player.rating || ''})
+              </sup>              
               <Badge bg='secondary' className={`float-end ${this.props.showRank ? '' : 'd-none'}`}>
                 {this.props.index+1}
               </Badge>              

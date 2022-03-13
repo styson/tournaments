@@ -33,8 +33,8 @@ export default function Tournament() {
       .then(res => {
         API.get('apiDirector', `/director/${pk}`)
           .then(res => {
-            // setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0).sort((a, b) => a.rank > b.rank ? 1 : -1));
-            setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0).sort((a, b) => a.name > b.name ? 1 : -1));
+            setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0).sort((a, b) => a.rank > b.rank ? 1 : -1));
+            // setPlayers(res.Items.filter(_ => _.sk.indexOf('PLAY') === 0).sort((a, b) => a.name > b.name ? 1 : -1));
             setRounds(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') < 0)).sort((a, b) => a.name > b.name ? 1 : -1));
             setScenarios(res.Items.filter(_ => (_.sk.indexOf('ROUN') === 0 && _.sk.indexOf('SCEN') > 0)).sort((a, b) => a.id > b.id ? 1 : -1));
           });
@@ -91,38 +91,53 @@ export default function Tournament() {
       if (r.matches !== undefined) {
         r.matches.forEach((m, x) => {
           // console.log(`match ${x} ${m.p1.name} vs ${m.p2.name}`);
-          if (m.p1Winner) {
-            cs[m.p1.sk].wins += 1;
-            cs[m.p1.sk].points += 10 + cs[m.p2.sk].wins;
+          if (m.scenario && m.scenario.name) {
+            if (m.p1Winner) {
+              cs[m.p1.sk].wins += 1;
+              cs[m.p1.sk].points += 10 + cs[m.p2.sk].wins;
+            } else {
+              cs[m.p2.sk].wins += 1;
+              cs[m.p2.sk].points += 10 + cs[m.p1.sk].wins;
+            }
+
+            cs[m.p1.sk].rank = r.activePlayers.find(_ => _.sk === m.p1.sk).rank;
+            cs[m.p2.sk].rank = r.activePlayers.find(_ => _.sk === m.p2.sk).rank;
+
+            const p1Game = {
+              win: m.p1Winner ? 1 : 0,
+              scenario: m.scenario,
+              side: m.p1Side,
+              opponent: m.p2,
+            }
+            if(cs[m.p1.sk] === undefined) {
+              cs[m.p1.sk] = { name: m.p1.name, rank: m.p1.rank, rounds: {} };
+            }
+            cs[m.p1.sk].rounds[`${r.round}`] = p1Game;
+
+            const p2Game = {
+              win: !m.p1Winner ? 1 : 0,
+              scenario: m.scenario,
+              side: m.p2Side,
+              opponent: m.p1,
+            }
+            if(cs[m.p2.sk] === undefined) {
+              cs[m.p2.sk] = { name: m.p2.name, rank: m.p2.rank, rounds: {} };
+            }
+            cs[m.p2.sk].rounds[`${r.round}`] = p2Game;
           } else {
-            cs[m.p2.sk].wins += 1;
-            cs[m.p2.sk].points += 10 + cs[m.p1.sk].wins;
+            const p1Game = {
+              win: -1, scenario: {},
+              side: '', opponent: m.p2,
+            }
+            const p2Game = {
+              win: -1, scenario: {},
+              side: '', opponent: m.p1,
+            }
+            cs[m.p1.sk].rank = r.activePlayers.find(_ => _.sk === m.p1.sk).rank;
+            cs[m.p1.sk].rounds[`${r.round}`] = p1Game;
+            cs[m.p2.sk].rank = r.activePlayers.find(_ => _.sk === m.p2.sk).rank;
+            cs[m.p2.sk].rounds[`${r.round}`] = p2Game;
           }
-
-          cs[m.p1.sk].rank = r.activePlayers.find(_ => _.sk === m.p1.sk).rank;
-          cs[m.p2.sk].rank = r.activePlayers.find(_ => _.sk === m.p2.sk).rank;
-
-          const p1Game = {
-            win: m.p1Winner ? 1 : 0,
-            scenario: m.scenario,
-            side: m.p1Side,
-            opponent: m.p2,
-          }
-          if(cs[m.p1.sk] === undefined) {
-            cs[m.p1.sk] = { name: m.p1.name, rank: m.p1.rank, rounds: {} };
-          }
-          cs[m.p1.sk].rounds[`${r.round}`] = p1Game;
-
-          const p2Game = {
-            win: !m.p1Winner ? 1 : 0,
-            scenario: m.scenario,
-            side: m.p2Side,
-            opponent: m.p1,
-          }
-          if(cs[m.p2.sk] === undefined) {
-            cs[m.p2.sk] = { name: m.p2.name, rank: m.p2.rank, rounds: {} };
-          }
-          cs[m.p2.sk].rounds[`${r.round}`] = p2Game;
         });
         if (r['extraPlayers'] !== undefined) {
           r['extraPlayers'].forEach((m, x) => {

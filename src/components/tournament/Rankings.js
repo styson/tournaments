@@ -59,6 +59,13 @@ const Rankings = ({ round, players, standings, tournament }) => {
   function resetWithStandings(res) {
     if (res.standings === {}) return;
 
+    if (round.round === 1) {
+      setError('round 1');
+      setActivePlayers(players);
+      setExtraPlayers([]);
+      return;
+    }
+
     if (round.rankingsComplete || complete) {
       console.log(`reset round ${round.round} players failed since complete [${complete}]`);
       return;
@@ -220,7 +227,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
                   >
                     {activePlayers.map((p, index) => {
                       p.rank = index + 1;
-                      return <RankedPlayer key={p.sk} player={p} index={index} showRank={true} />;
+                      return <RankedPlayer key={p.sk} player={p} index={index} showRank={true} showRating={true} />;
                     })}
                     {provided.placeholder}
                   </PlayerList>
@@ -242,7 +249,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
                   >
                     {extraPlayers.map((p, index) => {
                       p.rank = index + 1001;
-                      return <RankedPlayer key={p.sk} player={p} index={index} showRank={false} />;
+                      return <RankedPlayer key={p.sk} player={p} index={index} showRank={false} showRating={false} />;
                     })}
                     {provided.placeholder}
                   </ExtraPlayerList>

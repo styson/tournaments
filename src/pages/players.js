@@ -1,6 +1,6 @@
 import { API } from 'aws-amplify';
 import { Button, Card, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
-import { GetItems } from '../dynamo/ApiCalls';
+import { GetItems, putItem } from '../dynamo/ApiCalls';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Error } from '../components/styled/Error';
@@ -30,6 +30,8 @@ export default function Home() {
   const [playerRating, setPlayerRating] = useState('');
   const [placeHolder, setPlaceHolder] = useState(ratingPlaceHolder);
   const [playerEmail, setPlayerEmail] = useState('');
+  const [playerPhone, setPlayerPhone] = useState('');
+  const [playerLocation, setPlayerLocation] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -53,12 +55,16 @@ export default function Home() {
         name: playerName,
         rating: playerRating,
         email: playerEmail,
+        phone: playerPhone,
+        location: playerLocation,
       }
     }).then(res => refresh());
 
     setPlayerName('');
     setPlayerRating('');
     setPlayerEmail('');
+    setPlayerPhone('');
+    setPlayerLocation('');
     setError('');
   };
 
@@ -71,6 +77,38 @@ export default function Home() {
     setPlayerName('');
     setPlayerRating('');
     setPlayerEmail('');
+    setPlayerPhone('');
+    setPlayerLocation('');
+  };
+
+  const updateRatings = async (e) => {
+    if (e) e.preventDefault();
+    players.forEach((p, n) => {
+      fetch(`http://asl-ratings.org/web/api/getPlayer.php?name=${p.name}`, {
+        method: 'GET',
+        mode:'cors',
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.elo && data.elo.length > 0) {
+          const updatePlayer = { 
+            ...p,
+            rating: data.elo,
+          }
+
+          const index = players.findIndex(_ => _.pk === updatePlayer.pk && _.sk === updatePlayer.sk);
+          players[index] = updatePlayer;
+          // console.log(`${JSON.stringify(updatePlayer)}`);
+
+          putItem(updatePlayer);
+        }
+      })
+      .catch((err)=>{
+        console.log('err ',err)
+      });
+    });
   };
 
   const findRating = async (e) => {
@@ -88,6 +126,8 @@ export default function Home() {
     .then(function(data) {
       if (data.elo && data.elo.length > 0) {
         setPlayerRating(data.elo);
+      } else {
+        setError(data.name);
       }
     })
     .catch((err)=>{
@@ -101,9 +141,11 @@ export default function Home() {
     if (player.pk !== undefined) {
       setFormTitle('Update Player');
       setPlayer(player);
-      setPlayerName(player.name);
-      setPlayerRating(player.rating);
-      setPlayerEmail(player.email);
+      setPlayerName(player.name || '');
+      setPlayerRating(player.rating || '');
+      setPlayerEmail(player.email || '');
+      setPlayerPhone(player.phone || '');
+      setPlayerLocation(player.location || '');
     }
   };
 
@@ -120,6 +162,15 @@ export default function Home() {
           <Col md={3}>
             <h1>Players</h1>
           </Col>
+          <Col md={9}>
+            <Button
+              size='sm' className='mt-2 px-1 py-0 float-end'
+              variant='outline-success'
+              onClick={(e) => updateRatings(e)}
+            >
+              Update Player Ratings
+            </Button>
+          </Col>
         </Row> 
         <Row>
           <Col md={9}>
@@ -129,6 +180,8 @@ export default function Home() {
                   <th>Name</th>
                   <th>Current Rating</th>
                   <th>Email</th>
+                  <th>Phone</th>
+                  <th>Location</th>
                 </tr>
               </thead>            
               <tbody>
@@ -180,6 +233,22 @@ export default function Home() {
                       value={playerEmail}
                       autoComplete='off'
                       onChange={(e) => setPlayerEmail(e.target.value)}
+                    />
+                    <Form.Control
+                      className='mb-2'
+                      type='text'
+                      placeholder='Enter Phone...'
+                      value={playerPhone}
+                      autoComplete='off'
+                      onChange={(e) => setPlayerPhone(e.target.value)}
+                    />
+                    <Form.Control
+                      className='mb-2'
+                      type='text'
+                      placeholder='Enter Location...'
+                      value={playerLocation}
+                      autoComplete='off'
+                      onChange={(e) => setPlayerLocation(e.target.value)}
                     />
                     <div className='d-flex'>
                       <Button

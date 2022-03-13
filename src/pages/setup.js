@@ -1,10 +1,14 @@
 import { API } from 'aws-amplify';
+import { Box } from '../components/styled/Box';
+import { PlayerList } from '../components/styled/Lists';
 import { Button, ButtonGroup, ButtonToolbar, Col, Container, Dropdown, 
-  DropdownButton, Form, FormControl, InputGroup, Row, Table, Tabs, Tab } from 'react-bootstrap';
+  DropdownButton, Form, FormControl, InputGroup, Row, Tabs, Tab } from 'react-bootstrap';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { GetItems } from '../dynamo/ApiCalls';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { GetItems } from '../dynamo/ApiCalls';
 import Header from '../components/Header';
+import RankedPlayer from '../components/tournament/RankedPlayer';
 import Rounds from '../components/Rounds';
 
 export default function Setup() {
@@ -67,18 +71,18 @@ export default function Setup() {
     await getTournaments();
   }
 
-  const handleDelete = async (index, pk, sk) => {
-    API.del('apiDirector', `/director/object/${pk}/${sk}`)
-      .then(res => {
-        players.splice(index, 1);
+  // const handleDelete = async (index, pk, sk) => {
+  //   API.del('apiDirector', `/director/object/${pk}/${sk}`)
+  //     .then(res => {
+  //       players.splice(index, 1);
 
-        players.forEach((p, idx) => {
-          p.rank = idx+1;
-        });
+  //       players.forEach((p, idx) => {
+  //         p.rank = idx+1;
+  //       });
 
-        setPlayers([...players]);
-      });
-  };
+  //       setPlayers([...players]);
+  //     });
+  // };
 
   const addPlayer = async (sk) => {
     if(sk === 0) return;
@@ -113,39 +117,6 @@ export default function Setup() {
       setPlayerResults([{ pk: 0, sk: 0, name: 'Not Found' }]);
     }
     setPlayerSearch('');
-  }
-
-  const moveRow = async (direction, e, rank) => {
-    e.preventDefault();
-
-    const thisPlayer = players.findIndex(_ => _.rank === rank);
-    const thatPlayer = players.findIndex(_ => _.rank === rank + direction);
-    players[thisPlayer].rank = rank + direction;
-    players[thatPlayer].rank = rank;
-    setPlayers([...players]);
-    swapRows(direction, e.target);
-  }
-
-  function swapRows(direction, target) {
-    let index = target.parentElement.parentElement.parentElement.rowIndex;
-    if (!index) index = target.parentElement.parentElement.rowIndex;
-
-    const rows = document.getElementById('playerTable').rows;
-    
-    if (!rows[index]) {
-      console.log(`can't find row[${index}]`, target)
-      return;
-    }
-
-    const parent = rows[index].parentNode;
-
-    if(direction === -1) {
-      // when the row goes up the index will be equal to index - 1
-      if(index > 1) parent.insertBefore(rows[index],rows[index - 1]);
-    } else {
-      // when the row goes down the index will be equal to index + 1
-      if(index < rows.length -1) parent.insertBefore(rows[index + 1],rows[index]);
-    }
   }
 
   useEffect(() => {
@@ -225,6 +196,22 @@ export default function Setup() {
     }
   }
 
+  const reorder = (source, destination, draggableId) => {
+    const player = players.find(p => p.sk === draggableId);
+    players.splice(source.index, 1);
+    players.splice(destination.index, 0, player);
+  };
+
+  function onDragEnd(result) {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    reorder(source, destination, draggableId);
+  }
+    
   return (
     <>
       <Header />
@@ -261,63 +248,28 @@ export default function Setup() {
               <Row>
                 <Col md='5' className='mt-3'>
                   <h3>Tournament Players</h3>
-                  <Table id='playerTable' striped bordered hover size='sm'>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Rating</th>
-                        <th>Rank</th>
-                        <th>Remove</th>
-                      </tr>
-                    </thead>            
-                    <tbody>
-                      {players && players.map(function(d, idx){
+                  <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId='activeDrop'>
+                      {(provided, snapshot) => { 
                         return (
-                          <tr key={idx} data-index={idx}>
-                            <td>{d.name}</td>
-                            <td>{d.rating}</td>
-                            <td>
-                              {d.rank}
-                              <Button
-                                className='float-end'
-                                size='sm'
-                                variant='outline-secondary'
-                                onClick={(e) => moveRow(+1, e, d.rank)}
-                                disabled={d.rank === players.length ? 'disabled' : '' }
-                              >
-                                ⋁
-                              </Button>
-                              <Button
-                                className='float-end'
-                                size='sm'
-                                variant='outline-secondary'
-                                onClick={(e) => moveRow(-1, e, d.rank)}
-                                disabled={d.rank === 1 ? 'disabled' : '' }
-                              >
-                                ⋀
-                              </Button>
-                            </td>
-                            <td>
-                              <Button 
-                                key={`b${d.sk}`}
-                                className='float-end'
-                                size='sm'
-                                title={`${d.pk} ${d.sk}`}
-                                variant='outline-secondary'
-                                onClick={(e) => {
-                                  e.preventDefault();
-
-                                  handleDelete(idx, active.sk, d.sk);
-                                }}
-                              >
-                                X
-                              </Button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>            
-                  </Table>
+                          <Box>
+                            <PlayerList
+                              ref={provided.innerRef}
+                              {...provided.droppableProps}
+                              isDragging={snapshot.isDragging}                  
+                              isDraggingOver={snapshot.isDraggingOver}
+                            >
+                              {players && players.map((p, index) => {
+                                p.rank = index + 1;
+                                return <RankedPlayer key={p.sk} player={p} index={index} showRank={true} showRating={true} />;
+                              })}
+                              {provided.placeholder}
+                            </PlayerList>
+                          </Box>
+                         )
+                      }}
+                    </Droppable>
+                  </DragDropContext>
                 </Col>
                 <Col md='3' className='mt-3'>
                   <h4>Add Players</h4>
