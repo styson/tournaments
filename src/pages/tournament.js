@@ -1,9 +1,11 @@
 import { API } from 'aws-amplify';
-import { Col, Container, Row, Tabs, Tab } from 'react-bootstrap';
+import { Button, Col, Container, Row, Tabs, Tab } from 'react-bootstrap';
 import { putItem } from '../dynamo/ApiCalls';
 import { useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import Header from '../components/Header';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import Matches from '../components/tournament/Matches';
 import Rankings from '../components/tournament/Rankings';
 import Standings from '../components/tournament/Standings';
@@ -211,6 +213,60 @@ export default function Tournament() {
     }
   }, [rounds]);
 
+  const generatePDF = () => {
+    const doc = new jsPDF('p', 'pt');
+
+    const players = orderedPlayers || [];
+    const headers = [ '', 'Name', 'Points', 'Rounds' ];
+
+    if (Array.from(players).length > 0) {
+      doc.text(40, 30, `${tournament.name} Standings`);
+
+      const rows = [];
+      let rank = 0;
+      let points = 1000;
+      players.map(p => {
+        let pRank = '';
+        if (p.points < points) {
+          pRank = ++rank;
+          points = p.points;
+        } else {
+          rank++;
+        }
+
+        const row = [];
+        row.push(pRank);
+        row.push(p.name);
+        row.push(p.points);
+
+        const rds = Object.keys(p.rounds);
+        let results = '';
+        rds.map((r, index) => {
+          const game = p.rounds[r];
+          const win = game.win === 1;
+          results += win ? 'W ' : 'L ';
+          return 0;
+        });
+        row.push(results);
+
+        rows.push(row);
+        return 0;
+      });
+
+      doc.autoTable({
+        columnStyles: { 2: { font: 'courier', fontStyle: 'bold' } },
+        head: [headers],
+        body: rows,
+      })
+    } else {
+      doc.text(20, 20, 'No standings yet.');
+    }
+    doc.save(`${tournament.name} Standings.pdf`);
+
+    // https://github.com/parallax/jsPDF
+    // https://www.npmjs.com/package/jspdf-autotable
+  }
+
   return (
     <>
       <Header />
@@ -218,6 +274,16 @@ export default function Tournament() {
         <Row>
           <Col md='8' className='mt-3'>
             <h2>{tournament.name}</h2>
+          </Col>
+          <Col md='4' className='mt-3'>
+            <Button
+              className='float-end mt-3 me-4'
+              size='sm'
+              variant='outline-secondary'
+              onClick={generatePDF}
+            >
+              Download Standings
+            </Button>
           </Col>
         </Row>
         <Row>

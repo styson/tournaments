@@ -8,6 +8,8 @@
     "amplify-cli": "^1.0.0",
     "aws-amplify": "^4.3.14",
     "bootstrap": "^5.1.3",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.23",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
     "react-bootstrap": "^2.1.2",
