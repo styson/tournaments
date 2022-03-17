@@ -24,25 +24,33 @@ export default function Match({ match, matchKey, index, handleSave }) {
   const player2 = match.p2?.name || missing;
   // const player2rank = match.p2?.rank || '';
   let p1Winner = match.p1Winner;
+  let p2Winner = match.p2Winner || false;
+  let noWinner = !p1Winner && !p2Winner;
 
   const winnerChange = (e) => {
     setChanges(true);
     p1Winner = (e.target.id === `winner1${matchKey}`);
+    p2Winner = (e.target.id === `winner2${matchKey}`);
+    noWinner = (e.target.id === `noWinner${matchKey}`);
     updateFormData({
       ...formData,
       p1Winner,
+      p2Winner,
+      noWinner,
       index,
     });
   };
 
   const sideChange = (e) => {
     setChanges(true);
-    const p1Side = (e.target.id === `allied1${matchKey}`) ? 'Allied' : 'Axis';
-    const p2Side = (e.target.id !== `allied1${matchKey}`) ? 'Allied' : 'Axis';
+    const p1Allied = e.target.id === `allied1${matchKey}`;
+    const p2Allied = e.target.id === `allied2${matchKey}`;
+    const noSide = e.target.id === `noSide${matchKey}`;
     updateFormData({
       ...formData,
-      p1Side,
-      p2Side,
+      p1Allied,
+      p2Allied,
+      noSide,
       index,
     });
   };
@@ -92,30 +100,51 @@ export default function Match({ match, matchKey, index, handleSave }) {
         }
       />
       <Row className='mt-1'>
-        <Col md='6'>
+        <Col md='4'>
           <Form.Check
             label='Winner' name={`group1${matchKey}`} className='ms-3'
             type='radio' id={`winner1${matchKey}`} onChange={winnerChange}
             checked={formData.p1Winner}
           />
         </Col>
-        <Col md='6'>
+        <Col md='2'>
+          <Form.Check
+            label='' name={`group1${matchKey}`} className='ms-3'
+            type='radio' id={`noWinner${matchKey}`} onChange={winnerChange}
+            checked={formData.noWinner}
+          />
+        </Col>
+        <Col md='4'>
           <Form.Check
             label='Winner' name={`group1${matchKey}`} className='ms-3'
             type='radio' id={`winner2${matchKey}`} onChange={winnerChange}
-            checked={!formData.p1Winner}
+            checked={formData.p2Winner}
           />
         </Col>
       </Row>
       <Row>
-        <Col md='6'>
+        <Col md='4'>
           <Form.Check
             label='Allied' name={`group2${matchKey}`} className='ms-3'
             type='radio' id={`allied1${matchKey}`} onChange={sideChange}
-            checked={formData.p1Side === 'Allied'}
+            checked={formData.p1Allied}
           />
         </Col>
-        <Col md='6'>
+        <Col md='2'>
+          <Form.Check
+            label='' name={`group2${matchKey}`} className='ms-3'
+            type='radio' id={`noSide${matchKey}`} onChange={sideChange}
+            checked={formData.noSide}
+          />
+        </Col>
+        <Col md='4'>
+          <Form.Check
+            label='Allied' name={`group2${matchKey}`} className='ms-3'
+            type='radio' id={`allied2${matchKey}`} onChange={sideChange}
+            checked={formData.p2Allied}
+          />
+        </Col>
+        <Col md='2'>
           <Button
             key={matchKey}
             size='sm' className='px-1 py-0 float-end'
@@ -124,11 +153,6 @@ export default function Match({ match, matchKey, index, handleSave }) {
           >
             Save
           </Button>
-          <Form.Check
-            label='Allied' name={`group2${matchKey}`} className='ms-3'
-            type='radio' id={`allied2${matchKey}`} onChange={sideChange}
-            checked={formData.p1Side !== 'Allied'}
-          />
         </Col>
       </Row>
       </Form>

@@ -97,7 +97,7 @@ export default function Tournament() {
             if (m.p1Winner) {
               cs[m.p1.sk].wins += 1;
               cs[m.p1.sk].points += 10 + cs[m.p2.sk].wins;
-            } else {
+            } else if (m.p2Winner) {
               cs[m.p2.sk].wins += 1;
               cs[m.p2.sk].points += 10 + cs[m.p1.sk].wins;
             }
@@ -107,8 +107,9 @@ export default function Tournament() {
 
             const p1Game = {
               win: m.p1Winner ? 1 : 0,
+              noWinner: !m.p1Winner && !m.p2Winner,
               scenario: m.scenario,
-              side: m.p1Side,
+              side: m.p1Allied ? 'Allied' : m.noSide ? '' : 'Axis',
               opponent: m.p2,
             }
             if(cs[m.p1.sk] === undefined) {
@@ -117,9 +118,10 @@ export default function Tournament() {
             cs[m.p1.sk].rounds[`${r.round}`] = p1Game;
 
             const p2Game = {
-              win: !m.p1Winner ? 1 : 0,
+              win: m.p2Winner ? 1 : 0,
+              noWinner: !m.p1Winner && !m.p2Winner,
               scenario: m.scenario,
-              side: m.p2Side,
+              side: m.p2Allied ? 'Allied' : m.noSide ? '' : 'Axis',
               opponent: m.p1,
             }
             if(cs[m.p2.sk] === undefined) {
@@ -128,11 +130,11 @@ export default function Tournament() {
             cs[m.p2.sk].rounds[`${r.round}`] = p2Game;
           } else {
             const p1Game = {
-              win: -1, scenario: {},
+              win: -1, scenario: {}, noWinner: true,
               side: '', opponent: m.p2,
             }
             const p2Game = {
-              win: -1, scenario: {},
+              win: -1, scenario: {}, noWinner: true,
               side: '', opponent: m.p1,
             }
             cs[m.p1.sk].rank = r.activePlayers.find(_ => _.sk === m.p1.sk).rank;
@@ -144,7 +146,7 @@ export default function Tournament() {
         if (r['extraPlayers'] !== undefined) {
           r['extraPlayers'].forEach((m, x) => {
             const missedRound = {
-              win: 0, scenario: { name: 'No game this round.' },
+              win: 0, scenario: { name: 'No game this round.' }, noWinner: true,
               side: '', opponent: {},
             }
             cs[m.sk].rounds[`${r.round}`] = missedRound;
@@ -172,7 +174,11 @@ export default function Tournament() {
       const rds = Object.keys(p.rounds);
       rds.forEach(r => {
         const rd = p.rounds[r];
-        record.rounds[r] = { win: rd.win, opp: rd.opponent.name || '' };
+        record.rounds[r] = {
+          win: rd.win,
+          opp: rd.opponent.name || '',
+          noWinner: rd.noWinner,
+        };
       });
 
       pl.push(record)
@@ -244,7 +250,12 @@ export default function Tournament() {
         rds.map((r, index) => {
           const game = p.rounds[r];
           const win = game.win === 1;
-          results += win ? 'W ' : 'L ';
+          const noGame = game.opp === '';
+
+          results += (win) ? 'W ' :
+                     (noGame) ? '  ' :
+                     (game.noWinner) ? '? ' : 'L ';
+
           return 0;
         });
         row.push(results);
@@ -254,7 +265,7 @@ export default function Tournament() {
       });
 
       doc.autoTable({
-        columnStyles: { 2: { font: 'courier', fontStyle: 'bold' } },
+        columnStyles: { 3: { font: 'courier', fontSize: 11 } },
         head: [headers],
         body: rows,
       })

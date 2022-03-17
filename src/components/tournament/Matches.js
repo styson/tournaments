@@ -11,8 +11,11 @@ const newMatch = (scenarioList, round) => {
     p2: {},
     scenario: {},
     p1Winner: false,
-    p1Side: '', // axis or allied
-    p2Side: '', // axis or allied
+    p2Winner: false,
+    noWinner: true,
+    p1Allied: false,
+    p2Allied: false,
+    noSide: true,
     scenarioList,
     round,
   };
