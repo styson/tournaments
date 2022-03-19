@@ -2,7 +2,7 @@ import { API } from 'aws-amplify';
 import { Button, Card, Col, Container, Form, InputGroup, Row, Table } from 'react-bootstrap';
 import { Details } from '../components/styled/Details';
 import { Error } from '../components/styled/Error';
-import { GetItems } from '../dynamo/ApiCalls';
+import { GetItems, putItem } from '../dynamo/ApiCalls';
 import { ScenarioList } from '../components/styled/Lists';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -40,7 +40,12 @@ export default function Home() {
 
   useEffect(() => {
     refresh();
-  }, []);
+  }, [scenarios]);
+
+  function showError(error) {
+    setError(error);
+    setTimeout(() => {setError('')}, 3000);
+  }
 
   const findScenarioDetails = async (e) => {
     if (e) e.preventDefault();
@@ -59,10 +64,28 @@ export default function Home() {
         // setDetails(JSON.stringify(data));
         setDetails('Details found...');
         setArchiveData(data);
+
+        if (scenario.attacker !== data.attacker) {
+          const scen = {
+            ...scenario,
+            attacker: data.attacker,
+            defender: data.defender,
+            maps: data.maps,
+            title: data.title,
+          }
+          putItem(scen);
+
+          if (scenarios.length === 0) {
+            scenarios.push(scenario);
+          } else {
+            const index = scenarios.findIndex(_ => _.pk === scenario.pk && _.sk === scenario.sk);
+            scenarios[index] = scenario;
+          }
+          setScenarios(scenarios);
+          showError(`Updated ${scenario.name}`);
+        }
       } else {
-        setTimeout(() => {
-          setDetails('Details not found.');
-        }, 5000);
+        showError('Details not found.');
       }        
     })
     .catch((err) => {
@@ -142,6 +165,9 @@ export default function Home() {
                 <tr>
                   <th>Scenario Id</th>
                   <th>Name</th>
+                  <th>Attacker</th>
+                  <th>Defender</th>
+                  <th>Boards</th>
                   <th>Archive Id</th>
                 </tr>
               </thead>            

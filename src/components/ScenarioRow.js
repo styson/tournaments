@@ -8,6 +8,12 @@ const Scenario = ({ scenario, handleDelete, handleRowClick }) => {
     >
       <td>{scenario.id}</td>
       <td>{scenario.name}</td>
+      <td>{scenario.attacker}</td>
+      <td>{scenario.defender}</td>
+      <td>{scenario.maps && (
+          <>{scenario.maps.join(', ')}</>
+        )}
+      </td>
       <td>{scenario.scenario_id}
         <Button 
           size='sm'
