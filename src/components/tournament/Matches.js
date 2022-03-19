@@ -3,6 +3,8 @@ import { Error } from '../styled/Error';
 import { getItem, putItem } from '../../dynamo/ApiCalls';
 import { Problem } from '../styled/Problem';
 import { useEffect, useState } from 'react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import Match from './Match';
 import React from 'react';
 
@@ -27,7 +29,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
   const [activePlayers, setActivePlayers] = useState([]);
   const [complete, setComplete] = useState(round.matchesComplete || false);
   const [error, setError] = useState('');
-  const [problems, setProblems] = useState(['Preview the matches.']);
+  const [problems, setProblems] = useState([]);
   const [matches, setMatches] = useState([]);
   const [scenarioList, setScenarioList] = useState([]);
 
@@ -41,6 +43,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
       setMatches(round['matches']);
     } else {
       setMatches([]);
+      setProblems(['Preview the matches.']);
     }
   }, [round]);
 
@@ -132,6 +135,67 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
     setTimeout(() => {setError('')}, 3000);
   }
 
+  const matchReport = () => {
+    const doc = new jsPDF({
+      orientation: 'p',
+      unit: 'pt',
+      format: 'letter',
+    });
+
+    const headers = [ 'Player', '', 'Player', '', 'Scenario' ];
+    const rows = [];
+
+    if (Array.from(matches).length > 0) {
+
+      matches.map(m => {
+        const match = [];
+        const sides = [];
+
+        if(m.noWinner) {
+          match.push(m.p1.name);
+          match.push('vs.');
+          match.push(m.p2.name);
+        } else if (m.p1Winner) {
+          match.push(m.p1.name);
+          match.push('def.');
+          match.push(m.p2.name);
+        } else {
+          match.push(m.p2.name);
+          match.push('def.');
+          match.push(m.p1.name);
+        }
+
+        if (m.scenario && m.scenario.name > '') {
+          match.push('in');
+          match.push(`${m.scenario.id}: ${m.scenario.name}`);
+        }
+
+        if ((m.p1Winner && m.p1Allied) || (m.p2Winner && m.p2Allied)) {
+          sides.push('  as Allied');
+          sides.push('');
+          sides.push('  as Axis');
+        } else if ((m.p1Winner && !m.p1Allied) || (m.p2Winner && !m.p2Allied)) {
+          sides.push('  as Axis');
+          sides.push('');
+          sides.push('  as Allied');
+        }
+
+        rows.push(match);
+        rows.push(sides);
+
+        return 0;
+      });
+
+      doc.autoTable({
+        head: [headers],
+        body: rows,
+      })
+    } else {
+      doc.text(20, 20, 'No matches yet.');
+    }
+    doc.save(`Round ${round.round} Matches.pdf`);
+  }
+
   const previewMatches = () => {
     if (activePlayers.length === 0) {
       showError(`Players are not set for matches.`);
@@ -205,14 +269,6 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
           Reset Matches
         </Button>
         <Button
-          className={`flex-grow-1 me-1 mb-2 ${complete ? 'd-none' : ''}`}
-          size='sm'
-          variant='outline-primary'
-          onClick={previewMatches}
-        >
-          Preview Matches
-        </Button>
-        <Button
           id='generate-matches'
           size='sm'
           className={`flex-grow-1 ms-1 mb-2 ${complete || problems.length > 0 ? 'd-none' : ''}`}
@@ -221,6 +277,22 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
           disabled={complete}
         >
           Generate Matches
+        </Button>
+        <Button
+          className={`flex-grow-1 me-1 mb-2 ${complete ? 'd-none' : ''}`}
+          size='sm'
+          variant='outline-primary'
+          onClick={previewMatches}
+        >
+          Preview Matches
+        </Button>
+        <Button
+          className={`flex-grow-2 me-1 mb-2 ${matches.length === 0 ? 'd-none' : ''}`}
+          size='sm'
+          variant='outline-primary'
+          onClick={matchReport}
+        >
+          Match Report
         </Button>
       </div>
       <Error>
