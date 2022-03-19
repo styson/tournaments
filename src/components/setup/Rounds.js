@@ -1,4 +1,4 @@
-import { delRoundScenario, putRoundScenario, putItem } from '../dynamo/ApiCalls';
+import { delRoundScenario, putRoundScenario, putItem } from '../../dynamo/ApiCalls';
 import { Button, Col, Row } from 'react-bootstrap';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { useState } from 'react';

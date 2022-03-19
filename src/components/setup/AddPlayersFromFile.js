@@ -1,9 +1,9 @@
 import { API } from 'aws-amplify';
 import { Button } from 'react-bootstrap';
-import { GetItems } from '../dynamo/ApiCalls';
+import { GetItems } from '../../dynamo/ApiCalls';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import players from '../data/players'
+import players from '../../data/players'
 
 export default function AddPlayersFromFile() {
   const [existingPlayers, setPlayers] = useState([]);

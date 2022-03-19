@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import RankedPlayer from '../components/tournament/RankedPlayer';
-import Rounds from '../components/Rounds';
+import Rounds from '../components/setup/Rounds';
 
 export default function Setup() {
   let params = useParams();

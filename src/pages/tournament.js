@@ -220,7 +220,11 @@ export default function Tournament() {
   }, [rounds]);
 
   const generatePDF = () => {
-    const doc = new jsPDF('p', 'pt');
+    const doc = new jsPDF({
+      orientation: 'p',
+      unit: 'pt',
+      format: 'letter',
+    });
 
     const players = orderedPlayers || [];
     const headers = [ '', 'Name', 'Points', 'Rounds' ];

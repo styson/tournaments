@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Error } from '../components/styled/Error';
 import Header from '../components/Header';
 import Player from '../components/Player';
-import AddPlayersFromFile from '../components/AddPlayersFromFile';
+import AddPlayersFromFile from '../components/setup/AddPlayersFromFile';
 
 const ratingPlaceHolder = 'Enter Rating...';
 

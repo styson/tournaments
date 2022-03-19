@@ -1,4 +1,4 @@
-import { DetailList } from './styled/Details';
+import { DetailList } from '../styled/Details';
 import React from 'react';
 
 const ArchiveData = ({ data }) => {

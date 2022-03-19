@@ -1,8 +1,8 @@
-import { Box } from './styled/Box';
+import { Box } from '../styled/Box';
 import { Col } from 'react-bootstrap';
 import { Droppable } from 'react-beautiful-dnd';
-import { ScenarioList } from './styled/Lists';
-import { Title } from './styled/Headers';
+import { ScenarioList } from '../styled/Lists';
+import { Title } from '../styled/Headers';
 import React from 'react';
 import Scenario from './scenario';
 

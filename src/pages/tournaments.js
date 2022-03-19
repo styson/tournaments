@@ -1,7 +1,7 @@
 import { Col, Container, Row, Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
-import AddTournament from '../components/AddTournament';
+import AddTournament from '../components/setup/AddTournament';
 import { GetItems } from '../dynamo/ApiCalls';
 import Header from '../components/Header';
 import Tournament from '../components/Tournament';

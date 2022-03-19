@@ -6,8 +6,8 @@ import { GetItems } from '../dynamo/ApiCalls';
 import { ScenarioList } from '../components/styled/Lists';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import ArchiveData from '../components/ArchiveData';
-import AddScenariosFromFile from '../components/AddScenariosFromFile';
+import ArchiveData from '../components/setup/ArchiveData';
+import AddScenariosFromFile from '../components/setup/AddScenariosFromFile';
 import Header from '../components/Header';
 import ScenarioRow from '../components/ScenarioRow';
 
