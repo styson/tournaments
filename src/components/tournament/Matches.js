@@ -196,6 +196,65 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
     doc.save(`Round ${round.round} Matches.pdf`);
   }
 
+  const matchSlips = () => {
+    const doc = new jsPDF({
+      orientation: 'l',
+      unit: 'pt',
+      format: [400, 300],
+    });
+
+    const square = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfBAMAAADtgAsKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAMUExURYCAgOnp6e7u7v///9VMnYMAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAhSURBVCjPYyACCCkhAQGggLIxElAYFRi0Ahgxhx8wMAAA1nBFxO9N3QoAAAAASUVORK5CYII=";
+
+    if (Array.from(matches).length > 0) {
+      matches.map(m => {
+        const match = [];
+
+        const headers = [`Round ${round.round}`, 'Winner', 'Allied', 'Axis'];
+        match.push([m.p1.name, '', '', '']);
+        match.push([m.p2.name, '', '', '']);
+
+        doc.autoTable({
+          theme: 'grid',
+          headStyles: { fillColor: 220, textColor: 0 },
+          head: [headers],
+          body: match,
+          didDrawCell: (data) => {
+            if (data.section === 'body' && data.column.index > 0) {
+              doc.addImage(square, 'JPEG', data.cell.x + 10, data.cell.y + 5, 9, 10)
+            }
+          },
+        })
+
+        const scenarios = [];
+        m.scenarioList.forEach((s) => {
+          scenarios.push([s.id, s.name, '']);
+        });
+        if (scenarios.length > 0) {
+          scenarios.push(['', '', '']);
+          doc.autoTable({
+            theme: 'grid',
+            body: scenarios,
+            didDrawCell: (data) => {
+              if (data.section === 'body' && data.column.index === 2) {
+                doc.addImage(square, 'JPEG', data.cell.x + 4, data.cell.y + 5, 9, 10)
+              }
+            },
+          });
+        }
+
+        doc.addPage({
+          orientation: 'l',
+          unit: 'pt',
+          format: [400, 300],
+        });
+
+        return 0;
+      });
+
+      doc.save(`Round ${round.round} Match Slips.pdf`);
+    }
+  }
+
   const previewMatches = () => {
     if (activePlayers.length === 0) {
       showError(`Players are not set for matches.`);
@@ -292,7 +351,15 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
           variant='outline-primary'
           onClick={matchReport}
         >
-          Match Report
+          Match Summary
+        </Button>
+        <Button
+          className={`flex-grow-2 me-1 mb-2 ${matches.length === 0 ? 'd-none' : ''}`}
+          size='sm'
+          variant='outline-primary'
+          onClick={matchSlips}
+        >
+          Match Slips
         </Button>
       </div>
       <Error>

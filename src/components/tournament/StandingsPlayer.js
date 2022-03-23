@@ -23,9 +23,8 @@ const StandingsPlayer = ({ player }) => {
             let title = '';
             if (game.win === 1) title += 'Win';
             if (game.win === 0 && !noWinner && opp !== '') title += 'Loss';
-            if (noWinner) title += 'In progress';
             if (game.win === 0 && opp === '') title += `No game in Round ${index+1}`;
-            if (game.win === -1) title += 'Not finished';
+            if (noWinner && opp !== '') title += 'In progress';
             if (opp !== '') title += opp;
 
             let bg = (opp !== '') ? 'white' : 'lightgray';
