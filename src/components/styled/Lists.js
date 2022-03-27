@@ -15,6 +15,13 @@ const ExtraPlayerList = styled(PlayerList)`
   padding-bottom: 0;
 `;
 
+const MatchList = styled.div`
+  min-height: 100px;
+  max-height: 860px;
+  overflow-y: auto;
+  overflow-x: hidden;
+`;
+
 const ScenarioList = styled.div`
   padding: 2px 8px;
   transition: background-color 0.2s ease;
@@ -28,5 +35,6 @@ const ScenarioList = styled.div`
 export {
   PlayerList,
   ExtraPlayerList,
+  MatchList,
   ScenarioList,
 }

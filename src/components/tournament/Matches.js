@@ -97,6 +97,40 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
     putItem(rnd);
   }
 
+  function addMissingMatches() {
+    const players = [...activePlayers];
+
+    matches.forEach((m, n) => {
+      const p1 = players.findIndex(p => p.sk === m.p1.sk);
+      if (p1 > -1) players.splice(p1, 1);
+      const p2 = players.findIndex(p => p.sk === m.p2.sk);
+      if (p2 > -1) players.splice(p2, 1);
+    });
+
+    if (players.length % 2 === 0 && players.length > 1) {
+      showError(`Generated matches for ${players.length} players`);
+      let match = {};
+      players.forEach((p, n) => {
+        if (n === 0 || !!(n && !(n%2))) {
+          match = newMatch(scenarioList, round.round);
+          match['p1'] = p;
+          matches.push(match);
+        } else {
+          match['p2'] = p;
+        }
+      })
+
+      setMatches(matches);
+      const rnd = {
+        ...round,
+        matches,
+      }
+      putItem(rnd);
+    } else {
+      showError(`No matches to add.`);
+    }
+  }
+
   function reset() {
     showError('reset matches');
     setMatches([]);
@@ -142,7 +176,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
       format: 'letter',
     });
 
-    const headers = [ 'Player', '', 'Player', '', 'Scenario' ];
+    const headers = ['Player', '', 'Player', '', 'Scenario'];
     const rows = [];
 
     if (Array.from(matches).length > 0) {
@@ -197,11 +231,13 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
   }
 
   const matchSlips = () => {
-    const doc = new jsPDF({
+    const options = {
       orientation: 'l',
       unit: 'pt',
       format: [400, 300],
-    });
+    };
+
+    const doc = new jsPDF(options);
 
     const square = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfBAMAAADtgAsKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAMUExURYCAgOnp6e7u7v///9VMnYMAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAhSURBVCjPYyACCCkhAQGggLIxElAYFRi0Ahgxhx8wMAAA1nBFxO9N3QoAAAAASUVORK5CYII=";
 
@@ -242,12 +278,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
           });
         }
 
-        doc.addPage({
-          orientation: 'l',
-          unit: 'pt',
-          format: [400, 300],
-        });
-
+        doc.addPage(options);
         return 0;
       });
 
@@ -352,6 +383,14 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
           onClick={matchReport}
         >
           Match Summary
+        </Button>
+        <Button
+          className={`flex-grow-2 me-1 mb-2 ${matches.length === 0 ? 'd-none' : ''}`}
+          size='sm'
+          variant='outline-primary'
+          onClick={addMissingMatches}
+        >
+          Add Missing Matches
         </Button>
         <Button
           className={`flex-grow-2 me-1 mb-2 ${matches.length === 0 ? 'd-none' : ''}`}

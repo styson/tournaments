@@ -82,7 +82,7 @@ export default function Match({ match, matchKey, index, handleSave }) {
   });
 
   return (
-    <MatchBox key={matchKey}>
+    <MatchBox key={matchKey} noWinner={noWinner}>
       <Row>
         <Col md='6'>
           <MatchPlayer>{player1}</MatchPlayer>

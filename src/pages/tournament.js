@@ -1,6 +1,7 @@
 import { API } from 'aws-amplify';
 import { Button, Col, Container, Row, Tabs, Tab } from 'react-bootstrap';
 import { putItem } from '../dynamo/ApiCalls';
+import { MatchList } from '../components/styled/Lists';
 import { useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import Header from '../components/Header';
@@ -313,9 +314,9 @@ export default function Tournament() {
                       </div>
                     </Col>
                     <Col md='7' className='mt-2'>
-                      <div className='ms-3 me-1'>
+                      <MatchList className='mx-1'>
                         <Matches round={r} scenarios={scenarios} roundUpdate={roundUpdate} />
-                      </div>
+                      </MatchList>
                     </Col>
                   </Row>
                 </Tab>
