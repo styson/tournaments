@@ -137,8 +137,9 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
     setProblems([]);
     const rnd = { 
       ...round,
-      matches,
+      matches: [],
     }
+    // console.log(rnd.matches);
     putItem(rnd);
   }
 
@@ -361,7 +362,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
         <Button
           id='generate-matches'
           size='sm'
-          className={`flex-grow-1 ms-1 mb-2 ${complete || problems.length > 0 ? 'd-none' : ''}`}
+          className={`flex-grow-1 me-1 mb-2 ${complete || problems.length > 0 ? 'd-none' : ''}`}
           variant='outline-success'
           onClick={generate}
           disabled={complete}

@@ -93,7 +93,8 @@ export default function Tournament() {
 
       if (r.matches !== undefined) {
         r.matches.forEach((m, x) => {
-          // console.log(`match ${x} ${m.p1.name} vs ${m.p2.name}`);
+          if (m.p1.name === undefined || m.p2.name === undefined) return;
+          console.log(`match ${x} ${m.p1.name} vs ${m.p2.name}`);
           if (m.scenario && m.scenario.name) {
             if (m.p1Winner) {
               cs[m.p1.sk].wins += 1;
@@ -138,9 +139,13 @@ export default function Tournament() {
               win: -1, scenario: {}, noWinner: true,
               side: '', opponent: m.p1,
             }
-            cs[m.p1.sk].rank = r.activePlayers.find(_ => _.sk === m.p1.sk).rank;
+
+            const p1 = r.activePlayers.find(_ => _.sk === m.p1.sk);
+            const p2 = r.activePlayers.find(_ => _.sk === m.p2.sk);
+
+            cs[m.p1.sk].rank = p1 ? p1.rank : 0;
             cs[m.p1.sk].rounds[`${r.round}`] = p1Game;
-            cs[m.p2.sk].rank = r.activePlayers.find(_ => _.sk === m.p2.sk).rank;
+            cs[m.p2.sk].rank = p2 ? p2.rank : 0;
             cs[m.p2.sk].rounds[`${r.round}`] = p2Game;
           }
         });
