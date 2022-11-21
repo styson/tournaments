@@ -60,7 +60,7 @@ const Matches = ({ round, scenarios, roundUpdate }) => {
   }
 
   function updatePlayers(res) {
-    console.log('updatePlayers');
+    // console.log('updatePlayers');
     if (res.activePlayers.length > 0) {
       setActivePlayers(res.activePlayers);
     }

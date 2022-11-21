@@ -29,7 +29,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
 
   useEffect(() => {
     if(round.round === undefined) return;
-    console.log(`useEffect round ${round.round} with ${activePlayers.length} active players`);
+    // console.log(`useEffect round ${round.round} with ${activePlayers.length} active players`);
 
     // if (round.hasOwnProperty('extraPlayers')) {
 
@@ -43,11 +43,11 @@ const Rankings = ({ round, players, standings, tournament }) => {
 
   function updateRound() {
     if (round.rankingsComplete || complete) {
-      console.log(`update round ${round.round} players failed since complete [${complete}]`);
+      // console.log(`update round ${round.round} players failed since complete [${complete}]`);
       return;
     }
 
-    console.log(`updateRound ${round.round} with ${activePlayers.length} active players`);
+    // console.log(`updateRound ${round.round} with ${activePlayers.length} active players`);
     const rnd = { 
       ...round,
       activePlayers,
@@ -67,7 +67,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
     }
 
     if (round.rankingsComplete || complete) {
-      console.log(`reset round ${round.round} players failed since complete [${complete}]`);
+      // console.log(`reset round ${round.round} players failed since complete [${complete}]`);
       return;
     }
 
@@ -110,7 +110,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
     setActivePlayers([]);
     setExtraPlayers([]);
 
-    console.log(`clearPlayers ${round.round} with ${activePlayers.length} active players`);
+    // console.log(`clearPlayers ${round.round} with ${activePlayers.length} active players`);
     const rnd = { 
       ...round,
       activePlayers,
@@ -122,7 +122,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
   function completeRound(checked) {
     setComplete(checked);
     round.rankingsComplete = checked;
-    console.log(`completeRound ${round.round} with ${activePlayers.length} active players`);
+    // console.log(`completeRound ${round.round} with ${activePlayers.length} active players`);
     const rnd = { 
       ...round,
       rankingsComplete: checked,
@@ -141,7 +141,7 @@ const Rankings = ({ round, players, standings, tournament }) => {
     players.splice(destination.index, 0, player);
 
     if (round.rankingsComplete || complete) {
-      console.log(`reorder round ${round.round} players failed since complete [${complete}]`);
+      // console.log(`reorder round ${round.round} players failed since complete [${complete}]`);
       return;
     }
 

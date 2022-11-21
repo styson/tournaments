@@ -47,7 +47,7 @@ export default function Tournament() {
   function roundUpdate(rnd) {
     if (rnd) {
       let round = rounds.find(_ => _.round === rnd.round);
-      console.log(`round ${round.round} changing, from ${round.matches.length} matches to ${rnd.matches.length} matches`);
+      // console.log(`round ${round.round} changing, from ${round.matches.length} matches to ${rnd.matches.length} matches`);
       const index = rounds.findIndex(_ => _.sk === round.sk);
       rounds[index] = rnd;
     }
@@ -56,7 +56,7 @@ export default function Tournament() {
 
   function updateStandings() {
     if (players.length === 0 || rounds.length === 0) return;
-    console.log('updateStandings', players.length, rounds.length)
+    // console.log('updateStandings', players.length, rounds.length)
 
     let cs = {};
     players.forEach((p, n) => {
@@ -85,8 +85,7 @@ export default function Tournament() {
         r.extraPlayers = [];
       }
       if (r.activePlayers.length === 0 && r.extraPlayers.length === 0) {
-        console.log(`updateStandings ${r.round} with ${r.activePlayers.length} active players`);
-        console.log(`updateStandings ${r.round} with ${r.extraPlayers.length} active players`);
+        // console.log(`updateStandings ${r.round} with ${r.activePlayers.length} active players and ${r.extraPlayers.length} extra players`);
         r.activePlayers = players;
         putItem(r);
       }
@@ -94,14 +93,16 @@ export default function Tournament() {
       if (r.matches !== undefined) {
         r.matches.forEach((m, x) => {
           if (m.p1.name === undefined || m.p2.name === undefined) return;
-          console.log(`match ${x} ${m.p1.name} vs ${m.p2.name}`);
+          // console.log(`match ${x} ${m.p1.name} vs ${m.p2.name}`);
           if (m.scenario && m.scenario.name) {
             if (m.p1Winner) {
               cs[m.p1.sk].wins += 1;
-              cs[m.p1.sk].points += 10 + cs[m.p2.sk].wins;
+              // cs[m.p1.sk].points += 10 + cs[m.p2.sk].wins;
+              cs[m.p1.sk].points += 10;
             } else if (m.p2Winner) {
               cs[m.p2.sk].wins += 1;
-              cs[m.p2.sk].points += 10 + cs[m.p1.sk].wins;
+              // cs[m.p2.sk].points += 10 + cs[m.p1.sk].wins;
+              cs[m.p2.sk].points += 10;
             }
 
             cs[m.p1.sk].rank = r.activePlayers.find(_ => _.sk === m.p1.sk).rank;
@@ -160,6 +161,21 @@ export default function Tournament() {
           });
         }
       }
+    });
+
+    // calculate points after all rounds
+    players.forEach((p) => {
+      const rds = Object.keys(cs[p.sk].rounds);
+      rds.forEach(r => {
+        const rd = cs[p.sk].rounds[r];
+        if (cs[rd.opponent.sk]) {
+          const w = cs[rd.opponent.sk].wins || 0;
+          // console.log(`${p.name}: ${rd.opponent.name} ${w}`)
+          if (rd.win) {
+            cs[p.sk].points += w;
+          }
+        }
+      });
     });
 
     const pl = [];

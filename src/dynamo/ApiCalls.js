@@ -32,7 +32,7 @@ export const putRoundScenario = async (scen) => {
 export const putItem = async (body) => {
   if (body.round && body.activePlayers.length === 0) {
     if (body.rankingsComplete && body.activePlayers.length === 0) {
-      console.log('removing activePlayers')
+      // console.log('removing activePlayers')
       return;
     }
   }
