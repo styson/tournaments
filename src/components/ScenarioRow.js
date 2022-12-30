@@ -19,7 +19,7 @@ const Scenario = ({ scenario, handleDelete, handleRowClick }) => {
           size='sm'
           className='float-end me-2'
           variant='outline-secondary'
-          onClick={() => handleDelete(scenario.pk,scenario.sk)}
+          onClick={(e) => handleDelete(e, scenario.pk,scenario.sk)}
         >
           X
         </Button>

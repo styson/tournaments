@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
+import './css/index.css';
 import Amplify from 'aws-amplify';
 import App from './App';
 import config from './aws-exports';

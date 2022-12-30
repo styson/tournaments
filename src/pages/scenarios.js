@@ -16,19 +16,22 @@ import ScenarioRow from '../components/ScenarioRow';
 
 export default function Home() {
   const [archiveData, setArchiveData] = useState({});
-  const [details, setDetails] = useState('');
+  const [details, setDetailHeader] = useState('');
   const [formTitle, setFormTitle] = useState('Add Scenario');
   const [scenario, setScenario] = useState({});
   const [scenarios, setScenarios] = useState([]);
   const [scenarioId, setScenarioId] = useState('');
   const [scenarioName, setScenarioName] = useState('');
   const [scenarioArchiveId, setScenarioArchiveId] = useState('');
+  const [scenarioAttacker, setScenarioAttacker] = useState('');
+  const [scenarioDefender, setScenarioDefender] = useState('');
   const [error, setError] = useState('');
 
   const reset = () => {
     setArchiveData({});
-    setDetails('');
+    setDetailHeader('');
     setError('');
+    setScenario({});
     setScenarioArchiveId('');
     setScenarioId('');
     setScenarioName('');
@@ -40,7 +43,7 @@ export default function Home() {
 
   useEffect(() => {
     refresh();
-  }, [scenarios]);
+  }, []);
 
   function showError(error) {
     setError(error);
@@ -50,7 +53,7 @@ export default function Home() {
   const findScenarioDetails = async (e) => {
     if (e) e.preventDefault();
 
-    setDetails('Searching...');
+    setDetailHeader('Searching...');
 
     fetch(`https://aslscenarioarchive.com/rest/scenario/list/${scenarioArchiveId}`, {
       method: 'GET',
@@ -61,28 +64,40 @@ export default function Home() {
     })
     .then(function(data) {
       if (data.scenario_id === scenarioArchiveId) {
-        // setDetails(JSON.stringify(data));
-        setDetails('Details found...');
+        setDetailHeader('Details found...');
         setArchiveData(data);
-
+        // console.log(data)
+        setScenarioId(data.sc_id);
+        setScenarioName(data.title);
+  
         if (scenario.attacker !== data.attacker) {
-          const scen = {
-            ...scenario,
-            attacker: data.attacker,
-            defender: data.defender,
-            maps: data.maps,
-            title: data.title,
+          if (scenario.sk === undefined) {
+            scenario.pk = 'SCENARIOS';
+            scenario.sk = `SCEN_${uuidv4()}`;
+            scenario.name = data.title;
+            scenario.scenario_id = data.scenario_id;
+            scenario.id = data.sc_id;
+            scenario.maps = data.maps;
+            scenario.attacker = data.attacker;
+            scenario.defender = data.defender;
+            setDetailHeader(`New Details found...`);
+            setScenarioAttacker(data.attacker);
+            setScenarioDefender(data.defender);
           }
-          putItem(scen);
+          
+          putItem(scenario, refresh);
 
-          if (scenarios.length === 0) {
+          const index = scenarios.findIndex(_ => _.pk === scenario.pk && _.sk === scenario.sk);
+          if (scenarios.length === 0 || index < 0) {
             scenarios.push(scenario);
+            showError(`Added ${scenario.name}`);
           } else {
-            const index = scenarios.findIndex(_ => _.pk === scenario.pk && _.sk === scenario.sk);
             scenarios[index] = scenario;
+            showError(`Updated ${scenario.name}`);
           }
+
           setScenarios(scenarios);
-          showError(`Updated ${scenario.name}`);
+          refresh();
         }
       } else {
         showError('Details not found.');
@@ -99,7 +114,7 @@ export default function Home() {
 
     const scenario = scenarios.length === 0 ? {} : scenarios.find(_ => _.pk === pk && _.sk === sk);
 
-    if (scenario.pk !== undefined) {
+    if (scenario.sk !== undefined) {
       setScenario(scenario);
       setFormTitle('Update Scenario');
       setScenarioId(scenario.id);
@@ -108,16 +123,16 @@ export default function Home() {
     }
   };
 
-  const handleDelete = async (pk, sk) => {
+  const handleDelete = async (event, pk, sk) => {
+    event.stopPropagation();
     API.del('apiDirector', `/director/object/${pk}/${sk}`)
       .then(res => refresh());
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const addScenario = async() => {
     if(scenarioId === '' || scenarioName === '') {
       setError('Scenario Id and Name are required.');
+      refresh();
       return;
     }
 
@@ -128,17 +143,26 @@ export default function Home() {
     const sk = scenario.sk || `SCEN_${uuidv4()}`;
 
     const body = {
-        pk,
-        sk,
-        id: scenarioId,
-        name: scenarioName,
-        scenario_id: scenarioArchiveId,
-      }
+      pk,
+      sk,
+      id: scenarioId,
+      name: scenarioName,
+      scenario_id: scenarioArchiveId,
+      attacker: scenarioAttacker,
+      defender: scenarioDefender,
+      maps: scenario.maps,
+    }
 
-    API.post('apiDirector', '/director', { body })
+    API.put('apiDirector', '/director', { body })
       .then(res => refresh());
 
     reset();
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    addScenario();
   };
 
   const cancel = async (e) => {
@@ -155,6 +179,15 @@ export default function Home() {
         <Row>
           <Col md={3}>
             <h1>Scenarios</h1>
+          </Col>
+          <Col md={9} className='flex-end'>
+            <Button              
+              size='sm'
+              variant='secondary'
+              onClick={refresh}
+            >
+              refresh
+            </Button>
           </Col>
         </Row>
         <Row>

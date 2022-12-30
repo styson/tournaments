@@ -29,7 +29,7 @@ export const putRoundScenario = async (scen) => {
   });
 }
 
-export const putItem = async (body) => {
+export const putItem = async (body, callback) => {
   if (body.round && body.activePlayers.length === 0) {
     if (body.rankingsComplete && body.activePlayers.length === 0) {
       // console.log('removing activePlayers')
@@ -38,5 +38,8 @@ export const putItem = async (body) => {
   }
   API.put('apiDirector', '/director', {
     body
+  }).then(() => {
+    if(callback)
+      callback();
   });
 }
