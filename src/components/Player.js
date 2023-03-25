@@ -8,6 +8,7 @@ const Player = ({ player, handleDelete, handleRowClick }) => {
       onClick={() => handleRowClick(player.pk, player.sk)}
     >
       <td>{player.name || 'no name!'}</td>
+      <td>{player.code || ''}</td>
       <td>{player.rating || ''}</td>
       <td>{player.email || ''}</td>
       <td>{player.phone || ''}</td>

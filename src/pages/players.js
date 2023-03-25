@@ -26,6 +26,7 @@ export default function Home() {
 
   // form state
   const [formTitle, setFormTitle] = useState('Add Player');
+  const [playerCode, setPlayerCode] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [playerRating, setPlayerRating] = useState('');
   const [placeHolder, setPlaceHolder] = useState(ratingPlaceHolder);
@@ -53,6 +54,7 @@ export default function Home() {
         pk,
         sk,
         name: playerName,
+        code: playerCode,
         rating: playerRating,
         email: playerEmail,
         phone: playerPhone,
@@ -61,6 +63,7 @@ export default function Home() {
     }).then(res => refresh());
 
     setPlayerName('');
+    setPlayerCode('');
     setPlayerRating('');
     setPlayerEmail('');
     setPlayerPhone('');
@@ -75,6 +78,7 @@ export default function Home() {
     setError('');
 
     setPlayerName('');
+    setPlayerCode('');
     setPlayerRating('');
     setPlayerEmail('');
     setPlayerPhone('');
@@ -84,7 +88,7 @@ export default function Home() {
   const updateRatings = async (e) => {
     if (e) e.preventDefault();
     players.forEach((p, n) => {
-      fetch(`http://asl-ratings.org/web/api/getPlayer.php?name=${p.name}`, {
+      fetch(`https://asl-ratings.org/web/api/getPlayer.php?name=${p.name}`, {
         method: 'GET',
         mode:'cors',
       })
@@ -96,6 +100,7 @@ export default function Home() {
           const updatePlayer = { 
             ...p,
             rating: data.elo,
+            code: data.code,
           }
 
           const index = players.findIndex(_ => _.pk === updatePlayer.pk && _.sk === updatePlayer.sk);
@@ -115,7 +120,7 @@ export default function Home() {
     if (e) e.preventDefault();
 
     setPlaceHolder('Searching...');
-    fetch(`http://asl-ratings.org/web/api/getPlayer.php?name=${playerName}`, {
+    fetch(`https://asl-ratings.org/web/api/getPlayer.php?name=${playerName}`, {
       method: 'GET',
       mode:'cors',
     })
@@ -126,6 +131,32 @@ export default function Home() {
     .then(function(data) {
       if (data.elo && data.elo.length > 0) {
         setPlayerRating(data.elo);
+        setPlayerCode(data.code);
+      } else {
+        setError(data.name);
+      }
+    })
+    .catch((err)=>{
+      console.log('err ',err)
+    });
+  };
+
+  const findRatingByCode = async (e) => {
+    if (e) e.preventDefault();
+
+    setPlaceHolder('Searching...');
+    fetch(`https://asl-ratings.org/web/api/getPlayer.php?code=${playerCode}`, {
+      method: 'GET',
+      mode:'cors',
+    })
+    .then((response) => {
+      setPlaceHolder(ratingPlaceHolder);
+      return response.json();
+    })
+    .then(function(data) {
+      if (data.elo && data.elo.length > 0) {
+        setPlayerRating(data.elo);
+        setPlayerName(data.name);
       } else {
         setError(data.name);
       }
@@ -141,6 +172,7 @@ export default function Home() {
     if (player.pk !== undefined) {
       setFormTitle('Update Player');
       setPlayer(player);
+      setPlayerCode(player.code || '');
       setPlayerName(player.name || '');
       setPlayerRating(player.rating || '');
       setPlayerEmail(player.email || '');
@@ -178,12 +210,13 @@ export default function Home() {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>PRW Code</th>
                   <th>Current Rating</th>
                   <th>Email</th>
                   <th>Phone</th>
                   <th>Location</th>
                 </tr>
-              </thead>            
+              </thead>
               <tbody>
                 { players.map((p, index) => (
                   <Player
@@ -201,21 +234,13 @@ export default function Home() {
               <Card>
                 <Card.Body>
                   <Card.Title>{formTitle}</Card.Title>
-                    <Form.Control
-                      className='mb-2'
-                      type='text'
-                      placeholder='Enter Name...'
-                      value={playerName}
-                      autoComplete='off'
-                      onChange={(e) => setPlayerName(e.target.value)}
-                    />
                     <InputGroup className='mb-2'>
                       <Form.Control
                         type='text'
-                        placeholder={placeHolder}
-                        value={playerRating}
+                        placeholder='Enter Name...'
+                        value={playerName}
                         autoComplete='off'
-                        onChange={(e) => setPlayerRating(e.target.value)}
+                        onChange={(e) => setPlayerName(e.target.value)}
                       />
                       <Button
                         id='prwLookup'
@@ -223,9 +248,34 @@ export default function Home() {
                         variant='success'
                         onClick={(e) => findRating(e)}
                       >
-                        PRW
+                        ?
                       </Button>
                     </InputGroup>
+                    <InputGroup className='mb-2'>
+                      <Form.Control
+                        type='text'
+                        placeholder='Enter Code...'
+                        value={playerCode}
+                        autoComplete='off'
+                        onChange={(e) => setPlayerCode(e.target.value)}
+                      />
+                      <Button
+                        id='prwCodeLookup'
+                        size='sm'
+                        variant='success'
+                        onClick={(e) => findRatingByCode(e)}
+                      >
+                        ?
+                      </Button>
+                    </InputGroup>
+                    <Form.Control
+                      type='text'
+                      className='mb-2'
+                      placeholder={placeHolder}
+                      value={playerRating}
+                      autoComplete='off'
+                      onChange={(e) => setPlayerRating(e.target.value)}
+                    />
                     <Form.Control
                       className='mb-2'
                       type='text'
