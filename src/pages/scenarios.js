@@ -11,7 +11,7 @@ import AddScenariosFromFile from '../components/setup/AddScenariosFromFile';
 import Header from '../components/Header';
 import ScenarioRow from '../components/ScenarioRow';
 
-// import Amplify from 'aws-amplify';
+// import { Amplify } from 'aws-amplify';
 // Amplify.Logger.LOG_LEVEL = 'DEBUG';
 
 export default function Home() {
