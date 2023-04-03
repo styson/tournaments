@@ -85,10 +85,25 @@
     "@aws-amplify/core" "5.1.5"
     tslib "^1.8.0"
 
-"@aws-amplify/core@5.1.5", "@aws-amplify/core@^5.1.5":
+"@aws-amplify/core@5.1.5":
   version "5.1.5"
   resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-5.1.5.tgz#6c6b0af783b1755b4d7380bf631fd13556260a9a"
   integrity sha512-DRAaOu2VJOlMMfNVTTDz5kyzSGU14fLRM6r1GFQ/1iA6FQ/JlrvnLxJ+jcM5DBuMW3yacTBImtp7y5O5rOPeLQ==
+  dependencies:
+    "@aws-crypto/sha256-js" "1.2.2"
+    "@aws-sdk/client-cloudwatch-logs" "3.6.1"
+    "@aws-sdk/client-cognito-identity" "3.6.1"
+    "@aws-sdk/credential-provider-cognito-identity" "3.6.1"
+    "@aws-sdk/types" "3.6.1"
+    "@aws-sdk/util-hex-encoding" "3.6.1"
+    tslib "^1.8.0"
+    universal-cookie "^4.0.4"
+    zen-observable-ts "0.8.19"
+
+"@aws-amplify/core@5.1.6", "@aws-amplify/core@^5.1.5":
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-5.1.6.tgz#aa0e36f085b59b83dd9bf7259ddf585f61f3c5bf"
+  integrity sha512-X4qOTUQyKFgNQsb/GqY7Jb9nBjQgs0iRxJRj0XKfTgH+vNX0ukJnHehSMPT2ZPMz5GMLYpGd0d8uby1FPhxt8w==
   dependencies:
     "@aws-crypto/sha256-js" "1.2.2"
     "@aws-sdk/client-cloudwatch-logs" "3.6.1"
@@ -117,12 +132,23 @@
     zen-observable-ts "0.8.19"
     zen-push "0.2.1"
 
-"@aws-amplify/geo@2.0.22", "@aws-amplify/geo@^2.0.22":
+"@aws-amplify/geo@2.0.22":
   version "2.0.22"
   resolved "https://registry.yarnpkg.com/@aws-amplify/geo/-/geo-2.0.22.tgz#9e4a15378ef6fe9f76d03e287299c1735e46842b"
   integrity sha512-U/MKCostV60rZaSXwJ+aXHQm/THn1qTEGvsMmRyiV5XxnJD3FNdQWEAsJSrrQknnFntet8Loqrg9hYyhR6/tww==
   dependencies:
     "@aws-amplify/core" "5.1.5"
+    "@aws-sdk/client-location" "3.186.0"
+    "@turf/boolean-clockwise" "6.5.0"
+    camelcase-keys "6.2.2"
+    tslib "^1.8.0"
+
+"@aws-amplify/geo@^2.0.23":
+  version "2.0.23"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/geo/-/geo-2.0.23.tgz#af22eadb2828a716245cfd1ab117f0e9b14e884c"
+  integrity sha512-sKyoya4ZKNLCDtDSwMH/uiMDRrk7XI5F2J4kus/bKGe5Zw6FpfgttPWLr7WyLIDsV+MbBeq7PNs1aDaiGySSkg==
+  dependencies:
+    "@aws-amplify/core" "5.1.6"
     "@aws-sdk/client-location" "3.186.0"
     "@turf/boolean-clockwise" "6.5.0"
     camelcase-keys "6.2.2"
