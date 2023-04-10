@@ -27,7 +27,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.2.2",
     "styled-components": "^5.3.6",
-    "typescript": ">= 2.7",
+    "typescript": ">= 5.0",
     "uuid": "^9.0.0"
   },
   "scripts": {
