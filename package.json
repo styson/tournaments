@@ -5,7 +5,7 @@
   "dependencies": {
     "@aws-amplify/core": "^5.1.5",
     "@aws-amplify/geo": "^2.0.22",
-    "@aws-amplify/ui-react": "^4.4.1",
+    "@aws-amplify/ui-react": "^4.6.4",
     "@aws-sdk/client-dynamodb": "^3.51.0",
     "@babel/core": "^7.0.0",
     "@babel/plugin-syntax-flow": "^7.14.5",
